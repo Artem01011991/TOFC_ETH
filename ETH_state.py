@@ -33,7 +33,7 @@ class IndexInfo:
 
     def get_balance(self):
         '''
-        {'wmid': '098773018293', 'nickname': 'Till', 'balance':
+        {'wmid': '1', 'nickname': 'Till', 'balance':
         {'price': 73.66, 'wmz': 0.43}, 'portfolio':
         [{'id': 64, 'name': 'ETH', 'notes': 134, 'price': 0.5133, 'type': 'ECU', 'kind': 2, 'by': 2}], 'profit':
         [{'symbolid': 64, 'buy': 517.1196, 'sell': 517.5498}]}
