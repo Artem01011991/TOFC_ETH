@@ -41,7 +41,19 @@ class IndexInfo:
         '''
         return self.get_request(self.urls['balance'], wmid=self.wmid).get('value')
 
-    def get_request(self, url, wmid=None, ID=None, date_from=None, date_to=None, count='0', is_anonymous=True, is_bid=True, price='0', offer_id=None):
+    def get_request(
+            self,
+            url,
+            wmid=None,
+            ID=None,
+            date_from=None,
+            date_to=None,
+            count='0',
+            is_anonymous=True,
+            is_bid=True,
+            price='0',
+            offer_id=None
+    ):
         return requests.post(url, json=self._form_request(wmid, ID, date_from, date_to, count, is_anonymous, is_bid, price, offer_id)).json()
 
     def _form_request(self, wmid, ID, date_from, date_to, count, is_anonymous, is_bid , price, offer_id):
