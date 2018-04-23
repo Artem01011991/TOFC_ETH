@@ -93,7 +93,8 @@ class IndexInfo:
 
     def get_offer_my(self):
         '''
-        []
+        kind - тип операции задается целым десятичным числом, 1 -покупка, 0 - продажа
+        [{"toolid":0,"offerid":0,"name":"","kind":0,"price":0,"notes":0,"stamp":формат C#: new DateTime(1970, 1, 1, 0, 0, 0, 0)).AddSeconds(stamp);}]
         '''
         return self.get_request(self.urls['my offer'], wmid=self.wmid).get('value')
 
