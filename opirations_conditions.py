@@ -9,13 +9,11 @@ def sell(user_info, instrument_info):
         return {
             'count': settings.NOTES_AMOUNT,
             'price': price,
-            'isbid': False,
         }
     elif user_notes:
         return {
             'count': user_notes,
             'price': price,
-            'isbid': False,
         }
 
 

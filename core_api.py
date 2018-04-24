@@ -28,7 +28,6 @@ class IndexInfo:
     def get_eth_status(self):
         '''
         {'id': 64, 'name': 'ETH', 'price': 0.5473, 'kind': 2, 'type': 'ECU', 'by': 2}
-        :return:
         '''
         return self.get_request(self.urls['tool']).get('value')[1]
 
@@ -38,7 +37,6 @@ class IndexInfo:
         {'price': 73.66, 'wmz': 0.43}, 'portfolio':
         [{'id': 64, 'name': 'ETH', 'notes': 134, 'price': 0.5133, 'type': 'ECU', 'kind': 2, 'by': 2}], 'profit':
         [{'symbolid': 64, 'buy': 517.1196, 'sell': 517.5498}]}
-        :return:
         '''
         return self.get_request(self.urls['balance'], wmid=self.wmid).get('value')
 
@@ -85,7 +83,6 @@ class IndexInfo:
         isbid - тип операции задается целым десятичным числом, 1 -покупка, 0 - продажа
         [{'id': 1358784, 'stamp': 1522603074, 'name': 'ETH.ECU', 'isbid': 1, 'notes': 30, 'price': 0.3794},
          {'id': 1358783, 'stamp': 1522603074, 'name': 'ETH.ECU', 'isbid': 1, 'notes': 20, 'price': 0.3793}]
-        :return:
         '''
         return self.get_request(self.urls['history trading'], wmid=self.wmid, ID=self.ID, date_from=date_from, date_to=date_to).get('value')
 
@@ -127,7 +124,6 @@ class IndexInfo:
     def set_offer(self, count, price, is_bid=True, is_anonymous=True):
         '''
         IsBid - тип подачи заявки true - заявка будет создана для покупки, false - для продажи
-        :return:
         '''
         return self.get_request(
             self.urls['add offer'],
