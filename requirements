@@ -1,3 +1,4 @@
 python=3.6
 python-decouple=3.1
 requests=2.18.4
+mysql-connector-python=8.0.11

@@ -2,6 +2,7 @@ import requests
 import base64
 import hashlib
 
+
 class IndexInfo:
     """
     All data sends to methods as string values!!!
@@ -66,11 +67,11 @@ class IndexInfo:
             },
             "Trading":{
                 "ID": ID,
-                "DateStart":date_from,  # YYYYMMDD
-                "DateEnd":date_to,  # YYYYMMDD
+                "DateStart": date_from,  # YYYYMMDD
+                "DateEnd": date_to,  # YYYYMMDD
             },
-            "Offer":{
-                "ID":ID,
+            "Offer": {
+                "ID": ID,
                 "Count": count,
                 "IsAnonymous": is_anonymous,
                 "IsBid": is_bid,  # true - заявка будет создана для покупки, false - для продажи
@@ -94,7 +95,7 @@ class IndexInfo:
     def get_offer_my(self):
         '''
         kind - тип операции задается целым десятичным числом, 1 -покупка, 0 - продажа
-        [{"toolid":0,"offerid":0,"name":"","kind":0,"price":0,"notes":0,"stamp":формат C#: new DateTime(1970, 1, 1, 0, 0, 0, 0)).AddSeconds(stamp);}]
+        [{"toolid":0,"offerid":0,"name":"","kind":0,"price":0,"notes":0,"stamp":}]
         '''
         return self.get_request(self.urls['my offer'], wmid=self.wmid).get('value')
 
