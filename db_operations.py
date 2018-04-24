@@ -12,12 +12,19 @@ class MySqlConnection:
         database=config('NAME_DB'),
     )
 
-    def __init__(self, price, kind, notes=None, offerID=None):
+    def __init__(self, price=None, kind=None, notes=None, offerID=None):
         self.stamp = datetime.now().date()
         self.price = price
         self.notes = notes
         self.kind = kind
         self.offerID = offerID
+
+    def list(self):
+        cursor = self.cnt.cursor(buffered=True)
+        list = 'SELECT offerID FROM index_tasks;'
+
+        cursor.execute(list)
+        return cursor
 
     def write(self):
         cursor = self.cnt.cursor()
@@ -32,7 +39,6 @@ class MySqlConnection:
 
         cursor.execute(write, data)
         self.cnt.commit()
-        self.cnt.close()
 
     def exist(self):
         cursor = self.cnt.cursor()
@@ -54,4 +60,3 @@ class MySqlConnection:
 
         cursor.execute(delete, data)
         self.cnt.commit()
-        self.cnt.close()
