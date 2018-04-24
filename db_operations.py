@@ -8,45 +8,50 @@ class MySqlConnection:
         user=config('USER_DB'),
         password=config('PASSWORD_DB'),
         host=config('HOST_DB'),
-        port=config('PORT_DB'),
+        port=config('PORT_DB', cast=int),
         database=config('NAME_DB'),
     )
 
-    def __init__(self, price, count, isbid):
-        self.date = datetime.now()
+    def __init__(self, price, kind, notes=None, offerID=None):
+        self.stamp = datetime.now().date()
         self.price = price
-        self.count = count
-        self.isbid = isbid
-
-    def __delete__(self, instance):
-        self.cnt.commit()
-        self.cnt.close()
-        return super().__delete__(instance)
+        self.notes = notes
+        self.kind = kind
+        self.offerID = offerID
 
     def write(self):
         cursor = self.cnt.cursor()
-        write = 'INSERT INTO `%{table}s` SET (`date`="%{date}s", `price`="%{price}s", `count`="%{count}s", `isbid`="%{isbid}s");'
+        write = 'INSERT INTO index_tasks SET stamp=%(stamp)s, price=%(price)s, notes=%(notes)s, kind=%(kind)s, offerID=%(offerID)s;'
         data = {
-            'table': config('TABLE_DB'),
-            'date': self.date,
+            'stamp': self.stamp,
             'price': self.price,
-            'count': self.count,
-            'isbid': self.isbid,
+            'notes': self.notes,
+            'kind': self.kind,
+            'offerID': self.offerID,
         }
 
         cursor.execute(write, data)
+        self.cnt.commit()
+        self.cnt.close()
 
-    def read(self):
+    def exist(self):
         cursor = self.cnt.cursor()
-        read = 'SELECT * FROM `%{table}s` WHERE (`price`="%{price}s", `isbid`="%{isbid}s");'
+        read = 'SELECT * FROM index_tasks WHERE (price=%(price)s and kind=%(kind)s);'
         data = {
-            'table': config('TABLE_DB'),
             'price': self.price,
-            'isbid': self.isbid,
+            'kind': self.kind,
         }
 
         cursor.execute(read, data)
-        return cursor
+        return next(cursor, None)
 
     def delete(self):
-        pass
+        cursor = self.cnt.cursor()
+        delete = 'DELETE FROM index_tasks WHERE (offerID=%(offerID)s);'
+        data = {
+            'offerID': self.offerID,
+        }
+
+        cursor.execute(delete, data)
+        self.cnt.commit()
+        self.cnt.close()
