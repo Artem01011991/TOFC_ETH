@@ -5,11 +5,11 @@ from datetime import datetime
 
 class MySqlConnection:
     cnt = connector.connect(
-        user='kgbhmmyxevpltt',
-        password='28cbd7f4e0bcf341902c08f48372d41f8d9e80cde7329d3c9105b6d868121fc4',
-        host='ec2-174-129-41-64.compute-1.amazonaws.com',
-        port='5432',
-        database='d7ujqj2gd6r5kn',
+        user=config('USER_DB'),
+        password=config('PASSWORD_DB'),
+        host=config('HOST_DB'),
+        port=config('PORT_DB', cast=int),
+        database=config('NAME_DB'),
     )
 
     def __init__(self, price=None, kind=None, notes=None, offerID=None):
