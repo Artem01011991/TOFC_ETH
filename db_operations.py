@@ -1,6 +1,7 @@
-import mysql.connector as connector
+# import mysql.connector as connector
 from decouple import config
 from datetime import datetime
+import psycopg2 as connector
 
 
 class MySqlConnection:
