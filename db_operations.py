@@ -6,11 +6,7 @@ import psycopg2 as connector
 
 class MySqlConnection:
     cnt = connector.connect(
-        user=config('USER_DB'),
-        password=config('PASSWORD_DB'),
-        host=config('HOST_DB'),
-        port=config('PORT_DB', cast=int),
-        database=config('NAME_DB'),
+        config('DATABASE_URL'), sslmode='require'
     )
 
     def __init__(self, price=None, kind=None, notes=None, offerID=None):
