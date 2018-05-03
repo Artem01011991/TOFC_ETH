@@ -17,7 +17,7 @@ class MySqlConnection:
         self.offerID = offerID
 
     def list(self):
-        cursor = self.cnt.cursor(buffered=True)
+        cursor = self.cnt.cursor()
         list = 'SELECT offerID FROM index_tasks;'
 
         cursor.execute(list)
@@ -25,7 +25,7 @@ class MySqlConnection:
 
     def write(self):
         cursor = self.cnt.cursor()
-        write = 'INSERT INTO index_tasks SET stamp=%(stamp)s, price=%(price)s, notes=%(notes)s, kind=%(kind)s, offerID=%(offerID)s;'
+        write = 'INSERT INTO index_tasks(stamp, price, notes, kind, offerID) VALUES (%(stamp)s, %(price)s, %(notes)s, %(kind)s, %(offerID)s);'
         data = {
             'stamp': self.stamp,
             'price': self.price,
