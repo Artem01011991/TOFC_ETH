@@ -1,1 +1,1 @@
-clock: /usr/bin/python main.py
+clock: /usr/bin/python3.5 /app/main.py
