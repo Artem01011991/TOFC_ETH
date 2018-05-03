@@ -33,3 +33,5 @@ def clock_sched():
 
         if not status['value']['Code']:
             MySqlConnection(price=buy_condition['price'], kind=1, notes=buy_condition['count'], offerID=status['value']['OfferID']).write()
+
+sched.start()
