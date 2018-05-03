@@ -2,5 +2,5 @@
 python_version = "3.6"
 
 [packages]
-"APScheduler" = "3.5.0"
+"APScheduler" = "3.4.0"
 
