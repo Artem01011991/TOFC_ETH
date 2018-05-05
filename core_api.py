@@ -136,4 +136,4 @@ class IndexInfo:
         )
 
     def delete_offer(self, offer_id):
-        return self.get_request(self.urls['delete offer'], wmid=self.wmid, offer_id=offer_id)
+        return self.get_request(self.urls['delete offer'], wmid=self.wmid, offer_id=str(offer_id))
