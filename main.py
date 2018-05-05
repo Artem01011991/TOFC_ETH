@@ -22,7 +22,7 @@ def clock_sched():
     offer_for_delete = (
         i['offerid'] for i in my_offer_list
         if (i['kind'] == 0 and (
-                   sell_condition['price'] < i['price'] + settings.DELETE_OFFER_SELL_CONDITION
+                   sell_condition['price'] + settings.DELETE_OFFER_SELL_CONDITION < i['price']
                    or sell_condition['price'] > i['price']))
            or (i['kind'] == 1 and (
             buy_condition['price'] > i['price'] + settings.DELETE_OFFER_BUY_CONDITION
