@@ -3,6 +3,8 @@ from requests import request
 from settings import BINANCE_PROCENT
 from os import path
 import time
+import hmac
+import hashlib
 
 
 class BinanceCoreApi:
@@ -269,10 +271,202 @@ class BinanceCoreApi:
 
         return request('get', path.join(self.head, body), params={'symbol': self.symbol}).json()
 
+    def new_order(
+            self,
+            side,
+            type,
+            timeInForce,
+            quantity,
+            price,
+            stopPrice=0.0,
+            icebergQty=0.0,
+            newOrderRespType={},
+    ):
+        """
+
+        :param side:
+                    BUY
+                    SELL
+
+        :param type:
+                    LIMIT
+                    MARKET
+                    STOP_LOSS
+                    STOP_LOSS_LIMIT
+                    TAKE_PROFIT
+                    TAKE_PROFIT_LIMIT
+                    LIMIT_MAKER
+
+        :param timeInForce:
+                            GTC
+                            IOC
+                            FOK
+
+        :param quantity:
+        :param price:
+        :param stopPrice: Used with STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.
+        :param icebergQty:  Used with LIMIT, STOP_LOSS_LIMIT, and TAKE_PROFIT_LIMIT to create an iceberg order.
+        :param newOrderRespType: Set the response JSON. ACK, RESULT, or FULL; default: RESULT.
+        :return:
+                Response ACK:
+
+                {
+                  "symbol": "BTCUSDT",
+                  "orderId": 28,
+                  "clientOrderId": "6gCrw2kRUAF9CvJDGP16IP",
+                  "transactTime": 1507725176595
+                }
+
+                Response RESULT:
+
+                {
+                  "symbol": "BTCUSDT",
+                  "orderId": 28,
+                  "clientOrderId": "6gCrw2kRUAF9CvJDGP16IP",
+                  "transactTime": 1507725176595,
+                  "price": "0.00000000",
+                  "origQty": "10.00000000",
+                  "executedQty": "10.00000000",
+                  "status": "FILLED",
+                  "timeInForce": "GTC",
+                  "type": "MARKET",
+                  "side": "SELL"
+                }
+
+                Response FULL:
+
+                {
+                  "symbol": "BTCUSDT",
+                  "orderId": 28,
+                  "clientOrderId": "6gCrw2kRUAF9CvJDGP16IP",
+                  "transactTime": 1507725176595,
+                  "price": "0.00000000",
+                  "origQty": "10.00000000",
+                  "executedQty": "10.00000000",
+                  "status": "FILLED",
+                  "timeInForce": "GTC",
+                  "type": "MARKET",
+                  "side": "SELL",
+                  "fills": [
+                    {
+                      "price": "4000.00000000",
+                      "qty": "1.00000000",
+                      "commission": "4.00000000",
+                      "commissionAsset": "USDT"
+                    },
+                    {
+                      "price": "3999.00000000",
+                      "qty": "5.00000000",
+                      "commission": "19.99500000",
+                      "commissionAsset": "USDT"
+                    },
+                    {
+                      "price": "3998.00000000",
+                      "qty": "2.00000000",
+                      "commission": "7.99600000",
+                      "commissionAsset": "USDT"
+                    },
+                    {
+                      "price": "3997.00000000",
+                      "qty": "1.00000000",
+                      "commission": "3.99700000",
+                      "commissionAsset": "USDT"
+                    },
+                    {
+                      "price": "3995.00000000",
+                      "qty": "1.00000000",
+                      "commission": "3.99500000",
+                      "commissionAsset": "USDT"
+                    }
+                  ]
+                }
+        """
+        # body = 'api/v3/order'
+        body = 'api/v3/order/test'
+        data = {
+            'symbol': self.symbol,
+            'side': side,
+            'type': type,
+            'timeInForce': timeInForce,
+            'quantity': quantity,
+            'price': price,
+            # 'stopPrice': stopPrice,
+            # 'icebergQty': icebergQty,
+            # 'newOrderRespType': newOrderRespType,
+            'timestamp': self.timestamp,
+        }
+        signature = hmac.new(
+                self.secretkey.encode(),
+                '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
+                digestmod=hashlib.sha256
+            ).hexdigest()
+
+        data.update({'signature': signature})
+
+        return request('post', path.join(self.head, body), data=data, headers=self.header).json()
+
+    def cancel_order(self, orderId=None):
+        """
+
+        :param orderId:
+        :return:
+                        {
+                  "symbol": "LTCBTC",
+                  "origClientOrderId": "myOrder1",
+                  "orderId": 1,
+                  "clientOrderId": "cancelMyOrder1"
+                }
+        """
+        body = 'api/v3/order'
+        data = {'symbol': self.symbol, 'timestamp': self.timestamp, 'orderId': orderId}
+        signature = hmac.new(
+            config('BINANCE_SECRETKEY').encode(),
+            '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
+            digestmod=hashlib.sha256
+        ).hexdigest()
+
+        data.update({'signature': signature})
+
+        return request('delete', path.join(self.head, body), data=data, headers=self.header).json()
+
+    def current_open_orders(self):
+        """
+
+        :return: [
+                  {
+                    "symbol": "LTCBTC",
+                    "orderId": 1,
+                    "clientOrderId": "myOrder1",
+                    "price": "0.1",
+                    "origQty": "1.0",
+                    "executedQty": "0.0",
+                    "status": "NEW",
+                    "timeInForce": "GTC",
+                    "type": "LIMIT",
+                    "side": "BUY",
+                    "stopPrice": "0.0",
+                    "icebergQty": "0.0",
+                    "time": 1499827319559,
+                    "isWorking": trueO
+                  }
+                ]
+        """
+        body = 'api/v3/openOrders'
+        data = {'symbol': self.symbol, 'timestamp': self.timestamp}
+        signature = hmac.new(
+            config('BINANCE_SECRETKEY').encode(),
+            '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
+            digestmod=hashlib.sha256
+        ).hexdigest()
+
+        data.update({'signature': signature})
+
+        return request('get', path.join(self.head, body), params=data, headers=self.header).json()
+
 if __name__=='__main__':
     o = BinanceCoreApi(
         config('BINANCE_APIKEY'),
         config('BINANCE_SECRETKEY'),
         'ETHBTC'
     )
-    print(o.symbol_order_book_ticker())
+    print(o.current_open_orders())
