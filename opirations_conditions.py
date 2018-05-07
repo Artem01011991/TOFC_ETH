@@ -9,7 +9,7 @@ class TradingOpirations:
         self.sell_price = instrument_info['price'] + settings.PERCENT_SELL  # price for sale
         self.user_wmz = user_info['balance']['wmz']  # amount WMZ
         self.user_notes = user_info['portfolio'][0]['notes']  # amount ETH notes
-        self.selling_notes = functools.reduce(lambda x, y: x+y, (i['notes'] for i in my_offer_list if i['kind'] == 0))
+        self.selling_notes = functools.reduce(lambda x, y: x+y, (i['notes'] for i in my_offer_list if i['kind'] == 0), 0)
 
     def sell(self):
         rest_notes = self.user_notes - self.selling_notes
