@@ -1,37 +1,32 @@
-import settings
-import functools
-
-
 class TradingOpirations:
 
-    def __init__(self, instrument_info, user_info, my_offer_list):
-        self.buy_price = instrument_info['price'] - settings.PERCENT_BUY  # price for buy
-        self.sell_price = instrument_info['price'] + settings.PERCENT_SELL  # price for sale
+    def __init__(self, trading_percentage_result, user_info, price):
         self.user_wmz = user_info['balance']['wmz']  # amount WMZ
         self.user_notes = user_info['portfolio'][0]['notes']  # amount ETH notes
-        self.selling_notes = functools.reduce(lambda x, y: x+y, (i['notes'] for i in my_offer_list if i['kind'] == 0), 0)
+        self.trading_percentage_result = trading_percentage_result
+        self.price = price
 
     def sell(self):
-        rest_notes = self.user_notes - self.selling_notes
 
-        if rest_notes > settings.NOTES_AMOUNT:
+        if self.user_notes > self.trading_percentage_result['sell_notes']:
             return {
-                'count': settings.NOTES_AMOUNT,
-                'price': self.sell_price,
+                'count': self.trading_percentage_result['sell_notes'],
+                'price': self.trading_percentage_result['sell_price_diff'] + self.price,
             }
         return {
-            'count': rest_notes,
-            'price': self.sell_price,
+            'count': self.user_notes,
+            'price': self.trading_percentage_result['sell_price_diff'] + self.price,
         }
 
     def buy(self):
+        buy_price = self.price - self.trading_percentage_result['buy_price_diff']
 
-        if self.user_wmz >= settings.NOTES_AMOUNT * self.buy_price:
+        if self.user_wmz >= self.trading_percentage_result['buy_notes'] * buy_price:
             return {
-                'count': settings.NOTES_AMOUNT,
-                'price': self.buy_price,
+                'count': self.trading_percentage_result['buy_notes'],
+                'price': buy_price,
             }
         return {
-            'count': int(self.user_wmz / self.buy_price),
-            'price': self.buy_price,
+            'count': int(self.user_wmz / buy_price),
+            'price': buy_price,
         }

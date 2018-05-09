@@ -1,6 +1,7 @@
 import core_api
-import opirations_conditions
-import settings
+from opirations_conditions import TradingOpirations
+from index_trading import IndexTrading
+from db_operations import Connection
 from decouple import config
 from apscheduler.schedulers.blocking import BlockingScheduler
 
@@ -15,29 +16,30 @@ def clock_sched():
     instrument_info = index_connection.get_eth_status()
     my_offer_list = index_connection.get_offer_my()
 
-    trading = opirations_conditions.TradingOpirations(instrument_info, user_info, my_offer_list)
+    for i in my_offer_list:
+        if i:
+            index_connection.delete_offer(i['offerid'])
 
-    sell_condition = trading.sell()
-    buy_condition = trading.buy()
+    db_connection = Connection()
+    db_data = next(db_connection.get_index_state())
+    trading_percentage = IndexTrading(
+        db_data[1],
+        db_data[2],
+        db_data[3],
+        instrument_info['price']
+    )
+    trading = TradingOpirations(trading_percentage.sell_buy_conditions(), user_info, instrument_info['price'])
 
-    offer_for_delete = (
-        i['offerid'] for i in my_offer_list
-        if (i['kind'] == 0 and (
-                   sell_condition['price'] + settings.DELETE_OFFER_SELL_CONDITION < i['price']
-                   or sell_condition['price'] > i['price']))
-           or (i['kind'] == 1 and (
-            buy_condition['price'] > i['price'] + settings.DELETE_OFFER_BUY_CONDITION
-            or buy_condition['price'] < i['price'])))
+    db_connection.index_state_update(
+        instrument_info['price'],
+        trading_percentage.get_trade_state_percent(),
+        trading_percentage.actual_change_percent
+    )
 
-    if offer_for_delete:
-        for i in offer_for_delete:
-            index_connection.delete_offer(i)
+    sell = trading.sell()
+    buy = trading.buy()
 
-    if sell_condition['count'] and not next((i for i in my_offer_list if i['price'] == sell_condition['price'] and i['kind'] == 0), None):  # sell operation
-        index_connection.set_offer(sell_condition['count'], sell_condition['price'], is_bid=False)
-
-    if buy_condition['count'] and not next((i for i in my_offer_list if i['price'] == buy_condition['price'] and i['kind'] == 1), None):  # buy operation
-        index_connection.set_offer(buy_condition['count'], buy_condition['price'])
-
+    index_connection.set_offer(sell['count'], sell['price'], is_bid=False)
+    index_connection.set_offer(buy['count'], buy['price'])
 
 sched.start()
