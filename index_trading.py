@@ -14,7 +14,12 @@ class IndexTrading:
 
         if self.actual_change_percent < settings.RESET_TRADE_STATE_PERCENT and \
                 self.prior_change_percent < settings.RESET_TRADE_STATE_PERCENT:
-            return 0.0
+            if self.percent > 0:
+                return self.percent - settings.DECREASE_TRADE_PERCENT
+            elif self.percent < 0:
+                return self.percent + settings.DECREASE_TRADE_PERCENT
+            else:
+                return self.percent
 
         change_percent = self.actual_change_percent - self.prior_change_percent if \
             (self.prior_change_percent > 0 < self.actual_change_percent < self.prior_change_percent) or \
