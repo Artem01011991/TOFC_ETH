@@ -8,7 +8,7 @@ class IndexTrading:
         self.prior_price = prior_price
         self.prior_change_percent = prior_change_percent
         self.actual_price = actual_price
-        self.actual_change_percent = (self.actual_price - self.prior_price) / settings.DECREASE_TRADE_PERCENT
+        self.actual_change_percent = (self.actual_price - self.prior_price) / (settings.SELL_BUY_PRICE_DIFF / 100.0)
 
     def get_trade_state_percent(self):
 
