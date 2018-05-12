@@ -36,22 +36,22 @@ class IndexTrading:
             return trade_state_percent
 
     def sell_buy_conditions(self):
-        trade_state_percent = (100 - settings.MIN_PERCENT_FOR_SELL_BUY) / 100.0 * self.get_trade_state_percent()
+        trade_state_percent = settings.MIN_PERCENT_FOR_SELL_BUY / 100.0 * self.get_trade_state_percent()
 
         if trade_state_percent > 0:
-            buy_notes = int(settings.NOTES_AMOUNT / 100.0 * (50.0 + trade_state_percent))
+            buy_notes = 50.0 + trade_state_percent
             buy_price_diff = settings.SELL_BUY_PRICE_DIFF / 100.0 * (50.0 + trade_state_percent)
-            sell_notes = settings.NOTES_AMOUNT - buy_notes
+            sell_notes = 100.0 - buy_notes
             sell_price_diff = settings.SELL_BUY_PRICE_DIFF - buy_price_diff
         elif trade_state_percent < 0:
-            sell_notes = int(settings.NOTES_AMOUNT / 100.0 * (50.0 + (-trade_state_percent)))
+            sell_notes = 50.0 + (-trade_state_percent)
             sell_price_diff = settings.SELL_BUY_PRICE_DIFF / 100.0 * (50.0 + (-trade_state_percent))
-            buy_notes = settings.NOTES_AMOUNT - sell_notes
+            buy_notes = 100.0 - sell_notes
             buy_price_diff = settings.SELL_BUY_PRICE_DIFF - sell_price_diff
         else:
-            buy_notes = int(settings.NOTES_AMOUNT / 2)
+            buy_notes = 50.0
             buy_price_diff = settings.SELL_BUY_PRICE_DIFF / 2.0
-            sell_notes = settings.NOTES_AMOUNT - buy_notes
+            sell_notes = 50.0
             sell_price_diff = settings.SELL_BUY_PRICE_DIFF - buy_price_diff
 
         return {

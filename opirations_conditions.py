@@ -8,25 +8,17 @@ class TradingOpirations:
 
     def sell(self):
 
-        if self.user_notes > self.trading_percentage_result['sell_notes']:
+        if self.user_notes:
             return {
-                'count': self.trading_percentage_result['sell_notes'],
+                'count': int(self.user_notes / 100 * self.trading_percentage_result['sell_notes']),
                 'price': self.trading_percentage_result['sell_price_diff'] + self.price,
             }
-        return {
-            'count': self.user_notes,
-            'price': self.trading_percentage_result['sell_price_diff'] + self.price,
-        }
 
     def buy(self):
         buy_price = self.price - self.trading_percentage_result['buy_price_diff']
 
-        if self.user_wmz >= self.trading_percentage_result['buy_notes'] * buy_price:
+        if self.user_wmz >= buy_price:
             return {
-                'count': self.trading_percentage_result['buy_notes'],
+                'count': int((self.user_wmz / buy_price) / 100 * self.trading_percentage_result['buy_notes']),
                 'price': buy_price,
             }
-        return {
-            'count': int(self.user_wmz / buy_price),
-            'price': buy_price,
-        }
