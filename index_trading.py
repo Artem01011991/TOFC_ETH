@@ -40,12 +40,12 @@ class IndexTrading:
 
         if trade_state_percent > 0:
             buy_notes = 50.0 + trade_state_percent
-            buy_price_diff = settings.SELL_BUY_PRICE_DIFF / 100.0 * (50.0 + trade_state_percent)
+            buy_price_diff = settings.SELL_BUY_PRICE_DIFF / 100.0 * (50.0 - trade_state_percent)
             sell_notes = 100.0 - buy_notes
             sell_price_diff = settings.SELL_BUY_PRICE_DIFF - buy_price_diff
         elif trade_state_percent < 0:
             sell_notes = 50.0 + (-trade_state_percent)
-            sell_price_diff = settings.SELL_BUY_PRICE_DIFF / 100.0 * (50.0 + (-trade_state_percent))
+            sell_price_diff = settings.SELL_BUY_PRICE_DIFF / 100.0 * (50.0 + trade_state_percent)
             buy_notes = 100.0 - sell_notes
             buy_price_diff = settings.SELL_BUY_PRICE_DIFF - sell_price_diff
         else:
