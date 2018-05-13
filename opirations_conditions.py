@@ -10,7 +10,8 @@ class TradingOpirations:
 
         if self.user_notes:
             return {
-                'count': int(self.user_notes / 100 * self.trading_percentage_result['sell_notes']),
+                'count': int(self.user_notes / 100 * self.trading_percentage_result['sell_notes'] if \
+                                self.trading_percentage_result['sell_notes'] < 80.0 else self.user_notes),
                 'price': self.trading_percentage_result['sell_price_diff'] + self.price,
             }
 
@@ -19,6 +20,7 @@ class TradingOpirations:
 
         if self.user_wmz >= buy_price:
             return {
-                'count': int((self.user_wmz / buy_price) / 100 * self.trading_percentage_result['buy_notes']),
+                'count': int((self.user_wmz / buy_price) / 100 * self.trading_percentage_result['buy_notes'] if \
+                                 self.trading_percentage_result['buy_notes'] < 80.0 else int((self.user_wmz / buy_price))),
                 'price': buy_price,
             }
