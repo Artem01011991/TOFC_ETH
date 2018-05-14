@@ -538,6 +538,6 @@ if __name__=='__main__':
     o = BinanceCoreApi(
         config('BINANCE_APIKEY'),
         config('BINANCE_SECRETKEY'),
-        'ETHBTC'
+        'ETHUSDT'
     )
     print(o.account_information())
