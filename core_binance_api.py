@@ -463,7 +463,7 @@ class BinanceCoreApi:
 
         return request('get', path.join(self.head, body), params=data, headers=self.header).json()
 
-    def account_information(self):  # TODO check for work
+    def account_information(self):
         """
 
         :return:
@@ -502,7 +502,7 @@ class BinanceCoreApi:
 
         return request('get', path.join(self.head, body), params=data, headers=self.header).json()
 
-    def account_trade_list(self):  # TODO check for work
+    def account_trade_list(self):
         """
 
         :return:
@@ -540,4 +540,4 @@ if __name__=='__main__':
         config('BINANCE_SECRETKEY'),
         'ETHUSDT'
     )
-    print(o.account_information())
+    print(o.account_trade_list())
