@@ -15,7 +15,7 @@ def clock_sched():
     user_info = index_connection.get_balance()
     instrument_info = index_connection.get_eth_status()
     my_offer_list = index_connection.get_offer_my()
-    
+
     for i in my_offer_list:
         if i:
             index_connection.delete_offer(i['offerid'])
@@ -28,7 +28,7 @@ def clock_sched():
         db_data[3],
         instrument_info['price']
     )
-    trading = TradingOpirations(trading_percentage.sell_buy_conditions(), user_info, instrument_info['price'])
+    trading = TradingOpirations(trading_percentage.sell_buy_conditions(), user_info, instrument_info['price'], index_connection.get_offer_list())
 
     db_connection.index_state_update(
         instrument_info['price'],
