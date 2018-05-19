@@ -47,4 +47,5 @@ class TradingOpirations:
                 temp = i['price'] if not temp or temp < i['price'] else temp
 
         if int(self.user_wmz / temp + 0.001):
+            print(temp + 0.001, int(self.user_wmz / temp + 0.001))
             return {'count': int(self.user_wmz / temp + 0.001), 'price': temp + 0.001}
