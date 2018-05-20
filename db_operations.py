@@ -10,19 +10,39 @@ class Connection:
     def __init__(self):
         self.cursor = self.cnt.cursor()
 
-    def index_state_update(self, frash_price, percent, frash_change_percent):
-        update = 'UPDATE index_state_track SET ' \
-                 'percent=%(percent)s, ' \
-                 'prior_price=%(frash_price)s,' \
-                 'prior_change_percent=%(frash_change_percent)s' \
-                 ' WHERE id=1;'
-        data = {'frash_price': frash_price, 'percent': percent, 'frash_change_percent': frash_change_percent}
+    # def index_state_update(self, frash_price, percent, frash_change_percent):
+    #     update = 'UPDATE index_state_track SET ' \
+    #              'percent=%(percent)s, ' \
+    #              'prior_price=%(frash_price)s,' \
+    #              'prior_change_percent=%(frash_change_percent)s' \
+    #              ' WHERE id=1;'
+    #     data = {'frash_price': frash_price, 'percent': percent, 'frash_change_percent': frash_change_percent}
+    #
+    #     self.cursor.execute(update, data)
+    #     self.cnt.commit()
+    #
+    # def get_index_state(self):
+    #     state = 'SELECT * FROM index_state_track WHERE id=1;'
+    #
+    #     self.cursor.execute(state)
+    #     return self.cursor
 
-        self.cursor.execute(update, data)
+    def get_timestamp_data(self):
+        query = 'SELECT * FROM index_price_stamp ORDER BY created ASC;'
+
+        self.cursor.execute(query)
+        return self.cursor  # [[id, created, price]]
+
+    def set_timestamp(self, created, price):
+        query = 'INSERT INTO index_price_stamp (created, price) VALUES (%(created)s, %(price)s);'
+        data = {'created': created, 'price': price}
+
+        self.cursor.execute(query, data)
         self.cnt.commit()
 
-    def get_index_state(self):
-        state = 'SELECT * FROM index_state_track WHERE id=1;'
+    def delete_timestamp_data(self, id_list):
+        query = 'DELETE FROM index_price_stamp WHERE id IN %(id_list)s;'
+        data = {'id_list': id_list}
 
-        self.cursor.execute(state)
-        return self.cursor
+        self.cursor.execute(query, data)
+        self.cnt.commit()
