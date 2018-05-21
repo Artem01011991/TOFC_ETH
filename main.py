@@ -19,10 +19,25 @@ timestamp_data = db_connection.get_timestamp_data()
 
 date_time_now = datetime.now()
 ids_for_delete = ()
+occur_count = []
+max_count = [0, 0]
+prior_max_count = []
+
 for i in timestamp_data:
     if i[1] + timedelta(hours=24) <= date_time_now:
         ids_for_delete = ids_for_delete + (i[0],)
         timestamp_data.remove(i)
+    else:
+        for j in occur_count:
+
+            if not j:
+                occur_count.append([i[2], 1])
+
+                if j[0] == i[2]:
+                    j[1] += 1
+                if j[1] > max_count[1]:
+                    prior_max_count = max_count
+                    max_count = j
 
 if ids_for_delete:
     db_connection.delete_timestamp_data(ids_for_delete)
