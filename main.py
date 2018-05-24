@@ -10,36 +10,46 @@ from datetime import datetime, timedelta
 sched = BlockingScheduler()
 
 
-# @sched.scheduled_job('interval', minutes=1)
-# def clock_sched():
-index_connection = core_api.IndexInfo(config('USER_LOGIN'), config('USER_PASS'), config('USER_WMID'))
-instrument_info = index_connection.get_eth_status()
-db_connection = Connection()
-timestamp_data = db_connection.get_timestamp_data()
+@sched.scheduled_job('interval', minutes=1)
+def clock_sched():
+    index_connection = core_api.IndexInfo(config('USER_LOGIN'), config('USER_PASS'), config('USER_WMID'))
+    instrument_info = index_connection.get_eth_status()
+    db_connection = Connection()
 
-date_time_now = datetime.now()
-ids_for_delete = ()
-occur_count = {}  # list of amount of occur
-max_count = [-1, -1]  # largest most occur price
-prior_max_count = []  # lowest most occur price
+    date_time_now = datetime.now()
+    db_connection.set_timestamp(date_time_now, instrument_info['price'])
 
-for i in timestamp_data:
-    if i[1] + timedelta(hours=24) <= date_time_now:
-        ids_for_delete = ids_for_delete + (i[0],)
-        timestamp_data.remove(i)
-    else:
-        if occur_count.get(i[2], None):
-            occur_count[i[2]] += 1
+    timestamp_data = db_connection.get_timestamp_data().fetchall()
+
+    ids_for_delete = ()
+    occur_count = {}  # list of amount of occur
+    max_count = [-1, -1]  # largest most occur price
+    prior_max_count = [-1, -1]  # lowest most occur price
+
+
+    for i in timestamp_data:
+        if i[1] + timedelta(hours=24) <= date_time_now:
+            ids_for_delete = ids_for_delete + (i[0],)
+            timestamp_data.remove(i)
         else:
-            occur_count[i[2]] = 1
-        if occur_count[i[2]] > max_count[1]:
-            prior_max_count = max_count
-            max_count = [i[2], occur_count[i[2]]]
-print('===========', max_count, prior_max_count, occur_count)
-if ids_for_delete:
-    db_connection.delete_timestamp_data(ids_for_delete)
+            if occur_count.get(i[2], None):
+                occur_count[i[2]] += 1
+            else:
+                occur_count[i[2]] = 1
+            if occur_count[i[2]] > max_count[1] or (occur_count[i[2]] == max_count[1] and max_count[0] < i[2]):
+                prior_max_count = max_count if max_count[0] != prior_max_count[0] else prior_max_count
+                max_count = [i[2], occur_count[i[2]]]
 
-db_connection.set_timestamp(date_time_now, instrument_info['price'])
+    occur_count.pop(max_count[0])
+
+    for i in occur_count:
+        if occur_count[i] > prior_max_count[1] or (occur_count[i] == prior_max_count[1] and prior_max_count[0] < i):
+            prior_max_count = [i, occur_count[i]]
+
+    if ids_for_delete:
+        db_connection.delete_timestamp_data(ids_for_delete)
+
+sched.start()
 
 # user_info = index_connection.get_balance()
 # my_offer_list = index_connection.get_offer_my()
@@ -73,4 +83,3 @@ db_connection.set_timestamp(date_time_now, instrument_info['price'])
 #     print(index_connection.set_offer(buy['count'], buy['price']))
 
 
-# sched.start()
