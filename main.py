@@ -15,6 +15,8 @@ def clock_sched():
     index_connection = core_api.IndexInfo(config('USER_LOGIN'), config('USER_PASS'), config('USER_WMID'))
     instrument_info = index_connection.get_eth_status()
     db_connection = Connection()
+    user_info = index_connection.get_balance()
+    my_offer_list = index_connection.get_offer_my()
 
     date_time_now = datetime.now()
     db_connection.set_timestamp(date_time_now, instrument_info['price'])
@@ -25,7 +27,6 @@ def clock_sched():
     occur_count = {}  # list of amount of occur
     max_count = [-1, -1]  # largest most occur price
     prior_max_count = [-1, -1]  # lowest most occur price
-
 
     for i in timestamp_data:
         if i[1] + timedelta(hours=24) <= date_time_now:
@@ -46,13 +47,61 @@ def clock_sched():
         if occur_count[i] > prior_max_count[1] or (occur_count[i] == prior_max_count[1] and prior_max_count[0] < i):
             prior_max_count = [i, occur_count[i]]
 
+    if max_count[0] < prior_max_count[0]:
+        max_count[0], prior_max_count[0] = prior_max_count[0], max_count[0]
+
     if ids_for_delete:
         db_connection.delete_timestamp_data(ids_for_delete)
 
+    price_data = db_connection.get_price_data()
+    new_average_price = None
+    buy_offer = next((for i in my_offer_list if i['kind'] == 1), None)
+    if not buy_offer or buy_offer['notes'] < price_data[2]:
+        buy_offer_notes = buy_offer['notes'] if buy_offer else 0
+        bouth_notes_amount = price_data[2] - buy_offer_notes
+        prior_price_notes = user_info['portfolio'][0]['notes'] - bouth_notes_amount
+        sum_prior_price = prior_price_notes * price_data[0]
+        sum_price_new = bouth_notes_amount * price_data[1]
+        new_average_price = (sum_price_new + sum_prior_price) / user_info['portfolio'][0]['notes']
+
+    temp = None
+    for i in index_connection.get_offer_list():
+        if i['kind'] == 0:
+            temp = i['price'] if not temp or temp > i['price'] else temp
+    average_price = new_average_price if new_average_price else price_data[0]
+    offerid = next((i for i in my_offer_list if i['kind'] == 0), None)
+    if offerid:
+        index_connection.delete_offer(offerid['offerid'])
+    if average_price < temp:
+        index_connection.set_offer(user_info['portfolio'][0]['notes'], temp - 0.001, is_bid=False)
+    else:
+        index_connection.set_offer(user_info['portfolio'][0]['notes'], average_price, is_bid=False)
+
+    if max_count[0] >= instrument_info['price'] <= prior_max_count[0]:
+        temp = None
+        for i in index_connection.get_offer_list():
+            if i['kind'] == 1:
+                temp = i['price'] if not temp or temp < i['price'] else temp
+        offerid = next((i for i in my_offer_list if i['kind'] == 1), None)
+        if offerid:
+            index_connection.delete_offer(offerid['offerid'])
+        if temp < instrument_info['price']:
+            price = temp + 0.001
+            buy_amount = int(user_info['balance']['wmz'] / price)
+            if not index_connection.set_offer(buy_amount, price)['code']:
+                db_connection.set_price_data(average_price, price, buy_amount)
+        else:
+            price = instrument_info['price'] + 0.001
+            buy_amount = int(user_info['balance']['wmz'] / price)
+            if not index_connection.set_offer(buy_amount, price)['code']:
+                db_connection.set_price_data(average_price, price, buy_amount)
+
+
 sched.start()
 
+
 # user_info = index_connection.get_balance()
-# my_offer_list = index_connection.get_offer_my()
+#
 #
 # for i in my_offer_list:
 #     if i:

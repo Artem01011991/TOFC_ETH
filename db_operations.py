@@ -46,3 +46,20 @@ class Connection:
 
         self.cursor.execute(query, data)
         self.cnt.commit()
+
+    def get_price_data(self):
+        query = 'SELECT * FROM index_minimal_sell_price;'
+
+        self.cursor.execute(query)
+        return self.cursor  # [[price, buy_price, buy_amount]]
+
+    def set_price_data(self, average_price, buy_price, buy_amount):
+        query = 'UPDATE index_minimal_sell_price SET' \
+                'price=%(average_price)s,' \
+                'buy_price=%(buy_price)s,' \
+                'buy_amount=%(buy_amount)s' \
+                'WHERE id=1;'
+        data = {'average_price': average_price, 'buy_price': buy_price, 'buy_amount': buy_amount}
+
+        self.cursor.execute(query, data)
+        self.cnt.commit()
