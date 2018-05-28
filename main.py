@@ -53,7 +53,7 @@ def clock_sched():
     if ids_for_delete:
         db_connection.delete_timestamp_data(ids_for_delete)
 
-    price_data = db_connection.get_price_data()
+    price_data = next(db_connection.get_price_data())
     new_average_price = None
     buy_offer = next((i for i in my_offer_list if i['kind'] == 1), None)
     if not buy_offer or buy_offer['notes'] < price_data[2]:
