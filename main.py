@@ -55,7 +55,7 @@ def clock_sched():
 
     price_data = db_connection.get_price_data()
     new_average_price = None
-    buy_offer = next((for i in my_offer_list if i['kind'] == 1), None)
+    buy_offer = next((i for i in my_offer_list if i['kind'] == 1), None)
     if not buy_offer or buy_offer['notes'] < price_data[2]:
         buy_offer_notes = buy_offer['notes'] if buy_offer else 0
         bouth_notes_amount = price_data[2] - buy_offer_notes
