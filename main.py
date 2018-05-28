@@ -95,6 +95,8 @@ def clock_sched():
             buy_amount = int(user_info['balance']['wmz'] / price)
             if not index_connection.set_offer(buy_amount, price)['code']:
                 db_connection.set_price_data(average_price, price, buy_amount)
+    else:
+        (db_connection.set_price_data(average_price, i['price'], i['notes'])for i in index_connection.get_offer_list() if i['kind'] == 1)
 
 
 sched.start()
