@@ -53,53 +53,53 @@ def clock_sched():
     if ids_for_delete:
         db_connection.delete_timestamp_data(ids_for_delete)
 
-    price_data = next(db_connection.get_price_data())
-    new_average_price = None
-    buy_offer = next((i for i in my_offer_list if i['kind'] == 1), None)
-    if not buy_offer or buy_offer['notes'] < price_data[2]:
-        buy_offer_notes = buy_offer['notes'] if buy_offer else 0
-        bouth_notes_amount = price_data[2] - buy_offer_notes
-        prior_price_notes = user_info['portfolio'][0]['notes'] - bouth_notes_amount
-        sum_prior_price = prior_price_notes * price_data[0]
-        sum_price_new = bouth_notes_amount * price_data[1]
-        new_average_price = (sum_price_new + sum_prior_price) / user_info['portfolio'][0]['notes']
-
-    temp = None
-    for i in index_connection.get_offer_list():
-        if i['kind'] == 0:
-            temp = i['price'] if not temp or temp > i['price'] else temp
-    average_price = new_average_price if new_average_price else price_data[0]
-    offerid = next((i for i in my_offer_list if i['kind'] == 0), None)
-    if offerid:
-        index_connection.delete_offer(offerid['offerid'])
-    if average_price < temp:
-        index_connection.set_offer(user_info['portfolio'][0]['notes'], temp - 0.001, is_bid=False)
-    else:
-        index_connection.set_offer(user_info['portfolio'][0]['notes'], average_price, is_bid=False)
-
-    if max_count[0] >= instrument_info['price'] <= prior_max_count[0]:
-        temp = None
-        for i in index_connection.get_offer_list():
-            if i['kind'] == 1:
-                temp = i['price'] if not temp or temp < i['price'] else temp
-        offerid = next((i for i in my_offer_list if i['kind'] == 1), None)
-        if offerid:
-            index_connection.delete_offer(offerid['offerid'])
-        if temp < instrument_info['price']:
-            price = temp + 0.001
-            buy_amount = int(user_info['balance']['wmz'] / price)
-            if not index_connection.set_offer(buy_amount, price)['code']:
-                db_connection.set_price_data(average_price, price, buy_amount)
-        else:
-            price = instrument_info['price'] + 0.001
-            buy_amount = int(user_info['balance']['wmz'] / price)
-            if not index_connection.set_offer(buy_amount, price)['code']:
-                db_connection.set_price_data(average_price, price, buy_amount)
-    else:
-        (db_connection.set_price_data(average_price, i['price'], i['notes'])for i in index_connection.get_offer_list() if i['kind'] == 1)
-
-
-####################################### Binance logic ##################################################################
+#     price_data = next(db_connection.get_price_data())
+#     new_average_price = None
+#     buy_offer = next((i for i in my_offer_list if i['kind'] == 1), None)
+#     if not buy_offer or buy_offer['notes'] < price_data[2]:
+#         buy_offer_notes = buy_offer['notes'] if buy_offer else 0
+#         bouth_notes_amount = price_data[2] - buy_offer_notes
+#         prior_price_notes = user_info['portfolio'][0]['notes'] - bouth_notes_amount
+#         sum_prior_price = prior_price_notes * price_data[0]
+#         sum_price_new = bouth_notes_amount * price_data[1]
+#         new_average_price = (sum_price_new + sum_prior_price) / user_info['portfolio'][0]['notes']
+#
+#     temp = None
+#     for i in index_connection.get_offer_list():
+#         if i['kind'] == 0:
+#             temp = i['price'] if not temp or temp > i['price'] else temp
+#     average_price = new_average_price if new_average_price else price_data[0]
+#     offerid = next((i for i in my_offer_list if i['kind'] == 0), None)
+#     if offerid:
+#         index_connection.delete_offer(offerid['offerid'])
+#     if average_price < temp:
+#         index_connection.set_offer(user_info['portfolio'][0]['notes'], temp - 0.001, is_bid=False)
+#     else:
+#         index_connection.set_offer(user_info['portfolio'][0]['notes'], average_price, is_bid=False)
+#
+#     if max_count[0] >= instrument_info['price'] <= prior_max_count[0]:
+#         temp = None
+#         for i in index_connection.get_offer_list():
+#             if i['kind'] == 1:
+#                 temp = i['price'] if not temp or temp < i['price'] else temp
+#         offerid = next((i for i in my_offer_list if i['kind'] == 1), None)
+#         if offerid:
+#             index_connection.delete_offer(offerid['offerid'])
+#         if temp < instrument_info['price']:
+#             price = temp + 0.001
+#             buy_amount = int(user_info['balance']['wmz'] / price)
+#             if not index_connection.set_offer(buy_amount, price)['code']:
+#                 db_connection.set_price_data(average_price, price, buy_amount)
+#         else:
+#             price = instrument_info['price'] + 0.001
+#             buy_amount = int(user_info['balance']['wmz'] / price)
+#             if not index_connection.set_offer(buy_amount, price)['code']:
+#                 db_connection.set_price_data(average_price, price, buy_amount)
+#     else:
+#         (db_connection.set_price_data(average_price, i['price'], i['notes'])for i in index_connection.get_offer_list() if i['kind'] == 1)
+#
+#
+# ####################################### Binance logic ##################################################################
 
 
 sched.start()
