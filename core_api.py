@@ -94,7 +94,8 @@ class IndexInfo:
         kind - тип операции задается целым десятичным числом, 1 -покупка, 0 - продажа
         [{"toolid":0,"offerid":0,"name":"","kind":0,"price":0,"notes":0,"stamp":}]
         '''
-        return self.get_request(self.urls['my offer'], wmid=self.wmid).get('value')
+        result = self.get_request(self.urls['my offer'], wmid=self.wmid)
+        return result.get('value') if isinstance(result, dict) else result
 
     def get_offer_list(self):
         '''
