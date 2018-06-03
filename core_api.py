@@ -29,7 +29,8 @@ class IndexInfo:
         '''
         {'id': 64, 'name': 'ETH', 'price': 0.5473, 'kind': 2, 'type': 'ECU', 'by': 2}
         '''
-        return self.get_request(self.urls['tool']).get('value')[1]
+        result = self.get_request(self.urls['tool'])
+        return result.get('value')[1] if isinstance(result, dict) else result
 
     def get_balance(self):
         '''
