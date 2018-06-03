@@ -99,6 +99,9 @@ def clock_sched():
         (db_connection.set_price_data(average_price, i['price'], i['notes'])for i in index_connection.get_offer_list() if i['kind'] == 1)
 
 
+####################################### Binance logic ##################################################################
+
+
 sched.start()
 
 

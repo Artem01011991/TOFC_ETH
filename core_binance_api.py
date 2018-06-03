@@ -540,4 +540,4 @@ if __name__=='__main__':
         config('BINANCE_SECRETKEY'),
         'ETHUSDT'
     )
-    print(o.account_trade_list())
+    print(o.test_connectivity())
