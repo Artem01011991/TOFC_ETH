@@ -1,4 +1,5 @@
 import core_api
+import time
 from opirations_conditions import TradingOpirations
 from index_trading import IndexTrading
 from db_operations import Connection
@@ -13,10 +14,29 @@ sched = BlockingScheduler()
 @sched.scheduled_job('interval', minutes=1)
 def clock_sched():
     index_connection = core_api.IndexInfo(config('USER_LOGIN'), config('USER_PASS'), config('USER_WMID'))
-    instrument_info = index_connection.get_eth_status()
+
+    while True:
+        instrument_info = index_connection.get_eth_status()
+        if isinstance(instrument_info, str):
+            time.sleep(1)
+        else:
+            break
+
     db_connection = Connection()
-    user_info = index_connection.get_balance()
-    my_offer_list = index_connection.get_offer_my()
+
+    while True:
+        user_info = index_connection.get_balance()
+        if isinstance(user_info, str):
+            time.sleep(1)
+        else:
+            break
+
+    while True:
+        my_offer_list = index_connection.get_offer_my()
+        if isinstance(my_offer_list, str):
+            time.sleep(1)
+        else:
+            break
 
     date_time_now = datetime.now()
     db_connection.set_timestamp(date_time_now, instrument_info['price'])
@@ -65,38 +85,79 @@ def clock_sched():
         new_average_price = (sum_price_new + sum_prior_price) / user_info['portfolio'][0]['notes']
 
     temp = None
-    for i in index_connection.get_offer_list():
+
+    while True:
+        list_off = index_connection.get_offer_list()
+        if isinstance(list_off, str):
+            time.sleep(1)
+        else:
+            break
+
+    for i in list_off:
         if i['kind'] == 0:
             temp = i['price'] if not temp or temp > i['price'] else temp
+
     average_price = new_average_price if new_average_price else price_data[0]
     offerid = next((i for i in my_offer_list if i['kind'] == 0), None)
     if offerid:
-        index_connection.delete_offer(offerid['offerid'])
+        while True:
+            res = index_connection.delete_offer(offerid['offerid'])
+            if isinstance(res, str):
+                time.sleep(1)
+            else:
+                break
     if average_price < temp:
-        index_connection.set_offer(user_info['portfolio'][0]['notes'], temp - 0.001, is_bid=False)
+        while True:
+            res = index_connection.set_offer(user_info['portfolio'][0]['notes'], temp - 0.001, is_bid=False)
+            if isinstance(res, str):
+                time.sleep(1)
+            else:
+                break
     else:
-        index_connection.set_offer(user_info['portfolio'][0]['notes'], average_price, is_bid=False)
+        while True:
+            res = index_connection.set_offer(user_info['portfolio'][0]['notes'], average_price, is_bid=False)
+            if isinstance(res, str):
+                time.sleep(1)
+            else:
+                break
 
     if max_count[0] >= instrument_info['price'] <= prior_max_count[0]:
         temp = None
-        for i in index_connection.get_offer_list():
+        for i in list_off:
             if i['kind'] == 1:
                 temp = i['price'] if not temp or temp < i['price'] else temp
         offerid = next((i for i in my_offer_list if i['kind'] == 1), None)
         if offerid:
-            index_connection.delete_offer(offerid['offerid'])
+            while True:
+                res = index_connection.delete_offer(offerid['offerid'])
+                if isinstance(res, str):
+                    time.sleep(1)
+                else:
+                    break
         if temp < instrument_info['price']:
             price = temp + 0.001
             buy_amount = int(user_info['balance']['wmz'] / price)
-            if not index_connection.set_offer(buy_amount, price)['code']:
+            while True:
+                res = index_connection.set_offer(buy_amount, price)
+                if isinstance(res, str):
+                    time.sleep(1)
+                else:
+                    break
+            if not res['code']:
                 db_connection.set_price_data(average_price, price, buy_amount)
         else:
             price = instrument_info['price'] + 0.001
             buy_amount = int(user_info['balance']['wmz'] / price)
-            if not index_connection.set_offer(buy_amount, price)['code']:
+            while True:
+                res = index_connection.set_offer(buy_amount, price)
+                if isinstance(res, str):
+                    time.sleep(1)
+                else:
+                    break
+            if not res['code']:
                 db_connection.set_price_data(average_price, price, buy_amount)
     else:
-        (db_connection.set_price_data(average_price, i['price'], i['notes'])for i in index_connection.get_offer_list() if i['kind'] == 1)
+        (db_connection.set_price_data(average_price, i['price'], i['notes'])for i in list_off if i['kind'] == 1)
 
 
 ####################################### Binance logic ##################################################################
