@@ -1,6 +1,7 @@
 import requests
 import base64
 import hashlib
+import time
 
 
 class IndexInfo:
@@ -23,7 +24,13 @@ class IndexInfo:
         self.password = password
         self.wmid = wmid
         self.culture = culture
-        self.ID = str(self.get_eth_status()['id'])
+        while True:
+            status = self.get_eth_status()
+            if isinstance(status, str):
+                time.sleep(1)
+            else:
+                break
+        self.ID = str(status['id'])
 
     def get_eth_status(self):
         '''
