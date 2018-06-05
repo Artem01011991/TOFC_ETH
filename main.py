@@ -3,8 +3,9 @@ import time
 from opirations_conditions import TradingOpirations
 from index_trading import IndexTrading
 from db_operations import Connection
-from decouple import config
+from core_binance_api import BinanceCoreApi
 from apscheduler.schedulers.blocking import BlockingScheduler
+from decouple import config
 from datetime import datetime, timedelta
 
 
@@ -39,9 +40,9 @@ def clock_sched():
             break
 
     date_time_now = datetime.now()
-    db_connection.set_timestamp(date_time_now, instrument_info['price'])
+    db_connection.set_timestamp(date_time_now, instrument_info['price'], 'index_price_stamp')
 
-    timestamp_data = db_connection.get_timestamp_data().fetchall()
+    timestamp_data = db_connection.get_timestamp_data('index_price_stamp').fetchall()
 
     ids_for_delete = ()
     occur_count = {}  # list of amount of occur
@@ -71,7 +72,7 @@ def clock_sched():
         max_count[0], prior_max_count[0] = prior_max_count[0], max_count[0]
 
     if ids_for_delete:
-        db_connection.delete_timestamp_data(ids_for_delete)
+        db_connection.delete_timestamp_data(ids_for_delete, 'index_price_stamp')
 
     price_data = next(db_connection.get_price_data())
     new_average_price = None
@@ -160,7 +161,22 @@ def clock_sched():
         (db_connection.set_price_data(average_price, i['price'], i['notes'])for i in list_off if i['kind'] == 1)
 
 
-####################################### Binance logic ##################################################################
+    ####################################### Binance logic ##################################################################
+
+    binance_connection = BinanceCoreApi(config('BINANCE_APIKEY'), config('BINANCE_SECRETKEY'), 'ETHUSDT')
+    symbol_info = binance_connection.symbol_price_ticker()
+
+    db_connection.set_timestamp(date_time_now, symbol_info['price'], 'binance_price_stamp')
+
+    list_timestampe = db_connection.get_timestamp_data('binance_price_stamp')
+    ids_for_delete = ()
+    for i in list_timestampe:
+        if i[1] + timedelta(hours=24) <= date_time_now:
+            ids_for_delete = ids_for_delete + (i[0],)
+            list_timestampe.remove(i)
+
+    if ids_for_delete:
+        db_connection.delete_timestamp_data(ids_for_delete, 'binance_price_stamp')
 
 
 sched.start()
