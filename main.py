@@ -9,10 +9,11 @@ from decouple import config
 from datetime import datetime, timedelta
 
 
-sched = BlockingScheduler()
+sched1 = BlockingScheduler()
+sched2 = BlockingScheduler()
 
 
-@sched.scheduled_job('interval', minutes=1)
+@sched1.scheduled_job('interval', minutes=1)
 def clock_sched():
     index_connection = core_api.IndexInfo(config('USER_LOGIN'), config('USER_PASS'), config('USER_WMID'))
 
@@ -161,10 +162,16 @@ def clock_sched():
         (db_connection.set_price_data(average_price, i['price'], i['notes'])for i in list_off if i['kind'] == 1)
 
 
-    ####################################### Binance logic ##################################################################
+sched1.start()
+####################################### Binance logic ##################################################################
 
+
+@sched2.scheduled_job('interval', minutes=1)
+def clock_sched():
     binance_connection = BinanceCoreApi(config('BINANCE_APIKEY'), config('BINANCE_SECRETKEY'), 'ETHUSDT')
     symbol_info = binance_connection.symbol_price_ticker()
+    db_connection = Connection()
+    date_time_now = datetime.now()
 
     db_connection.set_timestamp(date_time_now, symbol_info['price'], 'binance_price_stamp')
 
@@ -179,7 +186,8 @@ def clock_sched():
         db_connection.delete_timestamp_data(ids_for_delete, 'binance_price_stamp')
 
 
-sched.start()
+sched2.start()
+
 
 
 # user_info = index_connection.get_balance()
