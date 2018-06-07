@@ -14,7 +14,7 @@ sched2 = BlockingScheduler()
 
 
 @sched1.scheduled_job('interval', minutes=1)
-def clock_sched():
+def clock_sched1():
     index_connection = core_api.IndexInfo(config('USER_LOGIN'), config('USER_PASS'), config('USER_WMID'))
 
     while True:
@@ -167,7 +167,7 @@ sched1.start()
 
 
 @sched2.scheduled_job('interval', minutes=1)
-def clock_sched():
+def clock_sched2():
     binance_connection = BinanceCoreApi(config('BINANCE_APIKEY'), config('BINANCE_SECRETKEY'), 'ETHUSDT')
     symbol_info = binance_connection.symbol_price_ticker()
     db_connection = Connection()
