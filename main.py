@@ -1,16 +1,14 @@
 import core_api
 import time
-from opirations_conditions import TradingOpirations
-from index_trading import IndexTrading
 from db_operations import Connection
 from core_binance_api import BinanceCoreApi
+from operations import Operations
 from apscheduler.schedulers.blocking import BlockingScheduler
 from decouple import config
 from datetime import datetime, timedelta
 
 
 sched1 = BlockingScheduler()
-sched2 = BlockingScheduler()
 
 
 @sched1.scheduled_job('interval', minutes=1)
@@ -163,7 +161,12 @@ def clock_sched1():
 
 
 sched1.start()
+
+
 ####################################### Binance logic ##################################################################
+
+
+sched2 = BlockingScheduler()
 
 
 @sched2.scheduled_job('interval', minutes=1)
@@ -172,53 +175,15 @@ def clock_sched2():
     symbol_info = binance_connection.symbol_price_ticker()
     db_connection = Connection()
     date_time_now = datetime.now()
+    operations = Operations()
 
     db_connection.set_timestamp(date_time_now, symbol_info['price'], 'binance_price_stamp')
 
-    list_timestampe = db_connection.get_timestamp_data('binance_price_stamp')
-    ids_for_delete = ()
-    for i in list_timestampe:
-        if i[1] + timedelta(hours=24) <= date_time_now:
-            ids_for_delete = ids_for_delete + (i[0],)
-            list_timestampe.remove(i)
+    list_timestampe = db_connection.get_timestamp_data('binance_price_stamp').fetchall()
+    largest_prices = operations.largest_prices(list_timestampe)
 
-    if ids_for_delete:
-        db_connection.delete_timestamp_data(ids_for_delete, 'binance_price_stamp')
+    if largest_prices['ids']:
+        db_connection.delete_timestamp_data(largest_prices['ids'], 'binance_price_stamp')
 
 
 sched2.start()
-
-
-
-# user_info = index_connection.get_balance()
-#
-#
-# for i in my_offer_list:
-#     if i:
-#         index_connection.delete_offer(i['offerid'])
-#
-# db_data = next(db_connection.get_index_state())
-# trading_percentage = IndexTrading(
-#     db_data[1],
-#     db_data[2],
-#     db_data[3],
-#     instrument_info['price']
-# )
-# trading = TradingOpirations(trading_percentage.sell_buy_conditions(), user_info, instrument_info['price'], index_connection.get_offer_list())
-#
-# db_connection.index_state_update(
-#     instrument_info['price'],
-#     trading_percentage.get_trade_state_percent(),
-#     trading_percentage.actual_change_percent
-# )
-#
-# sell = trading.sell()
-# buy = trading.buy()
-#
-# if sell:
-#     index_connection.set_offer(sell['count'], sell['price'], is_bid=False)
-# if buy:
-#     print('buy')
-#     print(index_connection.set_offer(buy['count'], buy['price']))
-
-
