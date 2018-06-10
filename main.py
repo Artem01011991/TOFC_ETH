@@ -8,10 +8,10 @@ from decouple import config
 from datetime import datetime, timedelta
 
 
-sched1 = BlockingScheduler()
+# sched1 = BlockingScheduler()
 
 
-def f(func, *args, **kwargs):
+def delay_func(func, *args, **kwargs):
     delay = 1
 
     while True:
@@ -28,13 +28,14 @@ def f(func, *args, **kwargs):
     return result
 
 
-@sched1.scheduled_job('interval', minutes=1)
-def clock_sched1():
+# @sched1.scheduled_job('interval', minutes=1)
+# def clock_sched1():
+while True:
     index_connection = core_api.IndexInfo(config('USER_LOGIN'), config('USER_PASS'), config('USER_WMID'))
-    instrument_info = f(index_connection.get_eth_status)
+    instrument_info = delay_func(index_connection.get_eth_status)
     db_connection = Connection()
-    user_info = f(index_connection.get_balance)
-    my_offer_list = f(index_connection.get_offer_my)
+    user_info = delay_func(index_connection.get_balance)
+    my_offer_list = delay_func(index_connection.get_offer_my)
 
     date_time_now = datetime.now()
     db_connection.set_timestamp(date_time_now, instrument_info['price'], 'index_price_stamp')
@@ -83,7 +84,7 @@ def clock_sched1():
         new_average_price = (sum_price_new + sum_prior_price) / user_info['portfolio'][0]['notes']
 
     temp = None
-    list_off = f(index_connection.get_offer_list)
+    list_off = delay_func(index_connection.get_offer_list)
 
     for i in list_off:
         if i['kind'] == 0:
@@ -92,11 +93,11 @@ def clock_sched1():
     average_price = new_average_price if new_average_price else price_data[0]
     offerid = next((i for i in my_offer_list if i['kind'] == 0), None)
     if offerid:
-        res = f(index_connection.delete_offer, offerid['offerid'])
+        res = delay_func(index_connection.delete_offer, offerid['offerid'])
     if average_price < temp:
-        res = f(index_connection.set_offer, user_info['portfolio'][0]['notes'], temp - 0.001, is_bid=False)
+        res = delay_func(index_connection.set_offer, user_info['portfolio'][0]['notes'], temp - 0.001, is_bid=False)
     else:
-        res = f(index_connection.set_offer, user_info['portfolio'][0]['notes'], average_price, is_bid=False)
+        res = delay_func(index_connection.set_offer, user_info['portfolio'][0]['notes'], average_price, is_bid=False)
 
     if max_count[0] >= instrument_info['price'] <= prior_max_count[0]:
         temp = None
@@ -105,11 +106,11 @@ def clock_sched1():
                 temp = i['price'] if not temp or temp < i['price'] else temp
         offerid = next((i for i in my_offer_list if i['kind'] == 1), None)
         if offerid:
-            res = f(index_connection.delete_offer, offerid['offerid'])
+            res = delay_func(index_connection.delete_offer, offerid['offerid'])
         if temp < instrument_info['price']:
             price = temp + 0.001
             buy_amount = int(user_info['balance']['wmz'] / price)
-            res = f(index_connection.set_offer, buy_amount, price)
+            res = delay_func(index_connection.set_offer, buy_amount, price)
             if not res['code']:
                 db_connection.set_price_data(average_price, price, buy_amount)
         else:
@@ -140,4 +141,7 @@ def clock_sched1():
         db_connection.delete_timestamp_data(largest_prices['ids'], 'binance_price_stamp')
 
 
-sched1.start()
+    time.sleep(60)
+
+
+# sched1.start()
