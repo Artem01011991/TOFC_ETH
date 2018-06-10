@@ -122,7 +122,7 @@ def clock_sched1():
         (db_connection.set_price_data(average_price, i['price'], i['notes'])for i in list_off if i['kind'] == 1)
 
 
-####################################### Binance logic ##################################################################
+    ####################################### Binance logic ##################################################################
 
 
     binance_connection = BinanceCoreApi(config('BINANCE_APIKEY'), config('BINANCE_SECRETKEY'), 'ETHUSDT')
