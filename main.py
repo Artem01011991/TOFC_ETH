@@ -122,17 +122,9 @@ def clock_sched1():
         (db_connection.set_price_data(average_price, i['price'], i['notes'])for i in list_off if i['kind'] == 1)
 
 
-sched1.start()
-
-
 ####################################### Binance logic ##################################################################
 
 
-sched2 = BlockingScheduler()
-
-
-@sched2.scheduled_job('interval', minutes=1)
-def clock_sched2():
     binance_connection = BinanceCoreApi(config('BINANCE_APIKEY'), config('BINANCE_SECRETKEY'), 'ETHUSDT')
     symbol_info = binance_connection.symbol_price_ticker()
     db_connection = Connection()
@@ -148,4 +140,4 @@ def clock_sched2():
         db_connection.delete_timestamp_data(largest_prices['ids'], 'binance_price_stamp')
 
 
-sched2.start()
+sched1.start()
