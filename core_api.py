@@ -36,7 +36,7 @@ class IndexInfo:
         '''
         {'id': 64, 'name': 'ETH', 'price': 0.5473, 'kind': 2, 'type': 'ECU', 'by': 2}
         '''
-        result = self.get_request(self.urls['tool'])
+        result = self._get_request(self.urls['tool'])
         return result.get('value')[1] if isinstance(result, dict) else result
 
     def get_balance(self):
@@ -46,10 +46,10 @@ class IndexInfo:
         [{'id': 64, 'name': 'ETH', 'notes': 134, 'price': 0.5133, 'type': 'ECU', 'kind': 2, 'by': 2}], 'profit':
         [{'symbolid': 64, 'buy': 517.1196, 'sell': 517.5498}]}
         '''
-        result = self.get_request(self.urls['balance'], wmid=self.wmid)
+        result = self._get_request(self.urls['balance'], wmid=self.wmid)
         return result.get('value') if isinstance(result, dict) else result
 
-    def get_request(
+    def _get_request(
             self,
             url,
             wmid=None,
@@ -93,11 +93,11 @@ class IndexInfo:
         [{'id': 1358784, 'stamp': 1522603074, 'name': 'ETH.ECU', 'isbid': 1, 'notes': 30, 'price': 0.3794},
          {'id': 1358783, 'stamp': 1522603074, 'name': 'ETH.ECU', 'isbid': 1, 'notes': 20, 'price': 0.3793}]
         '''
-        result = self.get_request(self.urls['history trading'], wmid=self.wmid, ID=self.ID, date_from=date_from, date_to=date_to)
+        result = self._get_request(self.urls['history trading'], wmid=self.wmid, ID=self.ID, date_from=date_from, date_to=date_to)
         return result.get('value') if isinstance(result, dict) else result
 
     def get_history_transaction(self, date_from, date_to):
-        result = self.get_request(self.urls['history transaction'], wmid=self.wmid, ID=self.ID, date_from=date_from, date_to=date_to)
+        result = self._get_request(self.urls['history transaction'], wmid=self.wmid, ID=self.ID, date_from=date_from, date_to=date_to)
         return result.get('value') if isinstance(result, dict) else result
 
     def get_offer_my(self):
@@ -105,7 +105,7 @@ class IndexInfo:
         kind - тип операции задается целым десятичным числом, 1 -покупка, 0 - продажа
         [{"toolid":0,"offerid":0,"name":"","kind":0,"price":0,"notes":0,"stamp":}]
         '''
-        result = self.get_request(self.urls['my offer'], wmid=self.wmid)
+        result = self._get_request(self.urls['my offer'], wmid=self.wmid)
         return result.get('value') if isinstance(result, dict) else result
 
     def get_offer_list(self):
@@ -113,7 +113,7 @@ class IndexInfo:
         kind - тип операции задается целым десятичным числом, 1 -покупка, 0 - продажа
         [{'offerid': 0, 'kind': 1, 'price': 0.5412, 'notes': 1}, {'offerid': 0, 'kind': 1, 'price': 0.5411, 'notes': 1}]
         '''
-        result = self.get_request(self.urls['list offer'], wmid=self.wmid, ID=self.ID)
+        result = self._get_request(self.urls['list offer'], wmid=self.wmid, ID=self.ID)
         return result.get('value') if isinstance(result, dict) else result
 
     def _get_signature(self, wmid, ID, date_from, date_to, offer_id):
@@ -138,7 +138,7 @@ class IndexInfo:
         '''
         IsBid - тип подачи заявки true - заявка будет создана для покупки, false - для продажи
         '''
-        return self.get_request(
+        return self._get_request(
             self.urls['add offer'],
             wmid=self.wmid,
             ID=self.ID,
@@ -149,4 +149,4 @@ class IndexInfo:
         )
 
     def delete_offer(self, offer_id):
-        return self.get_request(self.urls['delete offer'], wmid=self.wmid, offer_id=str(offer_id))
+        return self._get_request(self.urls['delete offer'], wmid=self.wmid, offer_id=str(offer_id))

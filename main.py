@@ -109,8 +109,8 @@ while True:
         binance_connection = BinanceCoreApi(config('BINANCE_APIKEY'), config('BINANCE_SECRETKEY'), 'ETHUSDT')
         symbol_info = binance_connection.symbol_price_ticker()
         db_connection = Connection()
-        date_time_now = datetime.now()
-        operations = Operations()
+        # date_time_now = datetime.now()
+        # operations = Operations()
 
         db_connection.set_timestamp(date_time_now, symbol_info['price'], 'binance_price_stamp')
 
