@@ -1,9 +1,9 @@
-from decouple import config
 from requests import request
 from os import path
 import time
 import hmac
 import hashlib
+import settings
 
 
 class BinanceCoreApi:
@@ -419,7 +419,7 @@ class BinanceCoreApi:
         body = 'api/v3/order'
         data = {'symbol': self.symbol, 'timestamp': self.timestamp, 'orderId': orderId}
         signature = hmac.new(
-            config('BINANCE_SECRETKEY').encode(),
+            settings.BINANCE_SECRETKEY.encode(),
             '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
             digestmod=hashlib.sha256
         ).hexdigest()
@@ -453,7 +453,7 @@ class BinanceCoreApi:
         body = 'api/v3/openOrders'
         data = {'symbol': self.symbol, 'timestamp': self.timestamp}
         signature = hmac.new(
-            config('BINANCE_SECRETKEY').encode(),
+            settings.BINANCE_SECRETKEY.encode(),
             '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
             digestmod=hashlib.sha256
         ).hexdigest()
@@ -492,7 +492,7 @@ class BinanceCoreApi:
         body = 'api/v3/account'
         data = {'timestamp': self.timestamp}
         signature = hmac.new(
-            config('BINANCE_SECRETKEY').encode(),
+            settings.BINANCE_SECRETKEY.encode(),
             '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
             digestmod=hashlib.sha256
         ).hexdigest()
@@ -523,7 +523,7 @@ class BinanceCoreApi:
         body = 'api/v3/myTrades'
         data = {'symbol': self.symbol, 'timestamp': self.timestamp}
         signature = hmac.new(
-            config('BINANCE_SECRETKEY').encode(),
+            settings.BINANCE_SECRETKEY.encode(),
             '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
             digestmod=hashlib.sha256
         ).hexdigest()

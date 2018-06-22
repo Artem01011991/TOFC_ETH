@@ -1,9 +1,9 @@
 import core_api
 import time
+import settings
 from db_operations import Connection
 from core_binance_api import BinanceCoreApi
 from operations import Operations
-from decouple import config
 from datetime import datetime
 
 
@@ -26,7 +26,7 @@ def delay_func(func, *args, **kwargs):
 
 
 def main():
-    index_connection = core_api.IndexInfo(config('USER_LOGIN'), config('USER_PASS'), config('USER_WMID'))
+    index_connection = core_api.IndexInfo(settings.USER_LOGIN, settings.USER_PASS, settings.USER_WMID)
     instrument_info = delay_func(index_connection.get_eth_status)
     db_connection = Connection()
     user_info = delay_func(index_connection.get_balance)
@@ -95,7 +95,7 @@ def main():
 
     ####################################### Binance logic ##################################################################
 
-    binance_connection = BinanceCoreApi(config('BINANCE_APIKEY'), config('BINANCE_SECRETKEY'), 'ETHUSDT')
+    binance_connection = BinanceCoreApi(settings.BINANCE_APIKEY, settings.BINANCE_SECRETKEY, 'ETHUSDT')
     symbol_info = binance_connection.symbol_price_ticker()
     db_connection = Connection()
     # date_time_now = datetime.now()
