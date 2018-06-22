@@ -1,10 +1,10 @@
-from decouple import config
+import settings
 import psycopg2 as connector
 
 
 class Connection:
     cnt = connector.connect(
-        config('DATABASE_URL'), sslmode='require'
+        settings.DATABASE_URL, sslmode='require'
     )
 
     def __init__(self):

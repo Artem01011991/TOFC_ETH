@@ -2,8 +2,8 @@ import subprocess
 import logging
 import sys
 import time
-from settings import DEBUG
-from mail_functions import main
+import settings
+from main_functions import main
 
 
 log = logging.getLogger()
@@ -15,10 +15,10 @@ chanel.setFormatter(formatter)
 log.addHandler(chanel)
 
 
-if DEBUG:
-    subprocess.run(['heroku', 'ps:scale', 'clock=0', '-a', 'immense-eyrie-59509'])
+if settings.DEBUG:
+    subprocess.run(['heroku', 'ps:scale', 'clock=0', '-a', settings.HEROKU_APP_NAME])
     main()
-    subprocess.run(['heroku', 'ps:scale', 'clock=1', '-a', 'immense-eyrie-59509'])
+    subprocess.run(['heroku', 'ps:scale', 'clock=1', '-a', settings.HEROKU_APP_NAME])
 else:
     while True:
         try:
