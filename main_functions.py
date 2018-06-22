@@ -5,7 +5,6 @@ from db_operations import Connection
 from core_binance_api import BinanceCoreApi
 from operations import Operations
 from datetime import datetime
-from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 def delay_func(func, *args, **kwargs):
@@ -108,16 +107,3 @@ def main_binance():
 
     if largest_prices['ids']:
         db_connection.delete_timestamp_data(largest_prices['ids'], 'binance_price_stamp')
-
-
-sched_job = BlockingScheduler()
-
-
-@sched_job.scheduled_job('interval', minutes=1, id='index')
-def main_index_sched():
-    main_index()
-
-
-@sched_job.scheduled_job('interval', minutes=1, id='binance')
-def main_binance_sched():
-    main_binance()

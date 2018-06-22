@@ -2,7 +2,7 @@ import subprocess
 import logging
 import sys
 import settings
-from main_functions import main_index, sched_job, main_binance
+from sched_functions import sched_job
 
 
 log = logging.getLogger()
@@ -15,6 +15,8 @@ log.addHandler(chanel)
 
 
 if settings.DEBUG:
+    from main_functions import main_index, main_binance
+
     subprocess.run(['heroku', 'ps:scale', 'clock=0', '-a', settings.HEROKU_APP_NAME])
     log.info('*******INDEX********')
     main_index()
