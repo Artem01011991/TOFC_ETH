@@ -114,6 +114,6 @@ def main():
 sched_job = BlockingScheduler()
 
 
-@sched_job.scheduled_job('interval', minutes=1)
+@sched_job.scheduled_job('interval', minutes=2)
 def main_sched():
     main()
