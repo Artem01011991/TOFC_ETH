@@ -19,4 +19,4 @@ if settings.DEBUG:
     main()
     subprocess.run(['heroku', 'ps:scale', 'clock=1', '-a', settings.HEROKU_APP_NAME])
 else:
-    sched_job.start()
+    sched_job.start(paused=True)

@@ -116,6 +116,4 @@ sched_job = BlockingScheduler()
 
 @sched_job.scheduled_job('interval', minutes=1)
 def main_sched():
-    sched_job.pause()
     main()
-    sched_job.resume()
