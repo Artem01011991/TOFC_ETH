@@ -1,9 +1,8 @@
 import subprocess
 import logging
 import sys
-import time
 import settings
-from main_functions import main
+from main_functions import main, sched_job
 
 
 log = logging.getLogger()
@@ -20,9 +19,4 @@ if settings.DEBUG:
     main()
     subprocess.run(['heroku', 'ps:scale', 'clock=1', '-a', settings.HEROKU_APP_NAME])
 else:
-    while True:
-        try:
-            main()
-            time.sleep(60)
-        except:
-            time.sleep(60)
+    sched_job.start()
