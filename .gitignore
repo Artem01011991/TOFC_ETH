@@ -2,4 +2,4 @@
 __pycache__/
 .idea/
 old_solutions/
-local_settings
+local_settings.py
