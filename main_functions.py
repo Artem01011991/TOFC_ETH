@@ -26,7 +26,7 @@ def delay_func(func, *args, **kwargs):
     return result
 
 
-def main():
+def main_index():
     index_connection = core_api.IndexInfo(settings.USER_LOGIN, settings.USER_PASS, settings.USER_WMID)
     instrument_info = delay_func(index_connection.get_eth_status)
     db_connection = Connection()
@@ -94,13 +94,12 @@ def main():
         (db_connection.set_price_data(average_price, i['price'], i['notes'])for i in list_off if i['kind'] == 1)
 
 
-    ####################################### Binance logic ##################################################################
-
+def main_binance():
     binance_connection = BinanceCoreApi(settings.BINANCE_APIKEY, settings.BINANCE_SECRETKEY, 'ETHUSDT')
     symbol_info = binance_connection.symbol_price_ticker()
     db_connection = Connection()
-    # date_time_now = datetime.now()
-    # operations = Operations()
+    date_time_now = datetime.now()
+    operations = Operations()
 
     db_connection.set_timestamp(date_time_now, symbol_info['price'], 'binance_price_stamp')
 
@@ -114,6 +113,11 @@ def main():
 sched_job = BlockingScheduler()
 
 
-@sched_job.scheduled_job('interval', minutes=2)
-def main_sched():
-    main()
+@sched_job.scheduled_job('interval', minutes=1, id='index')
+def main_index_sched():
+    main_index()
+
+
+@sched_job.scheduled_job('interval', minutes=1, id='binance')
+def main_binance_sched():
+    main_binance()
