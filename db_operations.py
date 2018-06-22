@@ -1,62 +1,48 @@
-import mysql.connector as connector
 from decouple import config
-from datetime import datetime
+import psycopg2 as connector
 
 
-class MySqlConnection:
+class Connection:
     cnt = connector.connect(
-        user=config('USER_DB'),
-        password=config('PASSWORD_DB'),
-        host=config('HOST_DB'),
-        port=config('PORT_DB', cast=int),
-        database=config('NAME_DB'),
+        config('DATABASE_URL'), sslmode='require'
     )
 
-    def __init__(self, price=None, kind=None, notes=None, offerID=None):
-        self.stamp = datetime.now().date()
-        self.price = price
-        self.notes = notes
-        self.kind = kind
-        self.offerID = offerID
+    def __init__(self):
+        self.cursor = self.cnt.cursor()
 
-    def list(self):
-        cursor = self.cnt.cursor(buffered=True)
-        list = 'SELECT offerID FROM index_tasks;'
+    def get_timestamp_data(self, table):
+        query = 'SELECT * FROM {table} ORDER BY created ASC;'.format(table=table)
 
-        cursor.execute(list)
-        return cursor
+        self.cursor.execute(query)
+        return self.cursor  # [[id, created, price]]
 
-    def write(self):
-        cursor = self.cnt.cursor()
-        write = 'INSERT INTO index_tasks SET stamp=%(stamp)s, price=%(price)s, notes=%(notes)s, kind=%(kind)s, offerID=%(offerID)s;'
-        data = {
-            'stamp': self.stamp,
-            'price': self.price,
-            'notes': self.notes,
-            'kind': self.kind,
-            'offerID': self.offerID,
-        }
+    def set_timestamp(self, created, price, table):
+        query = 'INSERT INTO {table} (created, price) VALUES (%(created)s, %(price)s);'.format(table=table)
+        data = {'created': created, 'price': price}
 
-        cursor.execute(write, data)
+        self.cursor.execute(query, data)
         self.cnt.commit()
 
-    def exist(self):
-        cursor = self.cnt.cursor()
-        read = 'SELECT * FROM index_tasks WHERE (price=%(price)s and kind=%(kind)s);'
-        data = {
-            'price': self.price,
-            'kind': self.kind,
-        }
+    def delete_timestamp_data(self, id_list, table):
+        query = 'DELETE FROM {table} WHERE id IN %(id_list)s;'.format(table=table)
+        data = {'id_list': id_list}
 
-        cursor.execute(read, data)
-        return next(cursor, None)
+        self.cursor.execute(query, data)
+        self.cnt.commit()
 
-    def delete(self):
-        cursor = self.cnt.cursor()
-        delete = 'DELETE FROM index_tasks WHERE (offerID=%(offerID)s);'
-        data = {
-            'offerID': self.offerID,
-        }
+    def get_price_data(self):
+        query = 'SELECT * FROM index_minimal_sell_price;'
 
-        cursor.execute(delete, data)
+        self.cursor.execute(query)
+        return self.cursor  # [[price, buy_price, buy_amount]]
+
+    def set_price_data(self, average_price, buy_price, buy_amount):
+        query = 'UPDATE index_minimal_sell_price SET' \
+                'price=%(average_price)s,' \
+                'buy_price=%(buy_price)s,' \
+                'buy_amount=%(buy_amount)s' \
+                'WHERE id=1;'
+        data = {'average_price': average_price, 'buy_price': buy_price, 'buy_amount': buy_amount}
+
+        self.cursor.execute(query, data)
         self.cnt.commit()

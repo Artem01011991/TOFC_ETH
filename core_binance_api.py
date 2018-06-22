@@ -1,6 +1,5 @@
 from decouple import config
 from requests import request
-from settings import BINANCE_PROCENT
 from os import path
 import time
 import hmac
@@ -532,12 +531,3 @@ class BinanceCoreApi:
         data.update({'signature': signature})
 
         return request('get', path.join(self.head, body), params=data, headers=self.header).json()
-
-
-if __name__=='__main__':
-    o = BinanceCoreApi(
-        config('BINANCE_APIKEY'),
-        config('BINANCE_SECRETKEY'),
-        'ETHUSDT'
-    )
-    print(o.account_trade_list())

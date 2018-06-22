@@ -1,5 +1,5 @@
-NOTES_AMOUNT = 15
-
-PROCENT = 0.005
-
-BINANCE_PROCENT = 0.005
+try:
+    import local_settings
+    DEBUG = local_settings.DEBUG
+except:
+    DEBUG = False
