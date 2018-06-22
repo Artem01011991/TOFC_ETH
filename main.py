@@ -2,7 +2,7 @@ import subprocess
 import logging
 import sys
 import time
-from settings import DEBUG
+from settings import DEBUG, HEROKU_APP_NAME
 from mail_functions import main
 
 
@@ -16,9 +16,9 @@ log.addHandler(chanel)
 
 
 if DEBUG:
-    subprocess.run(['heroku', 'ps:scale', 'clock=0', '-a', 'immense-eyrie-59509'])
+    subprocess.run(['heroku', 'ps:scale', 'clock=0', '-a', HEROKU_APP_NAME])
     main()
-    subprocess.run(['heroku', 'ps:scale', 'clock=1', '-a', 'immense-eyrie-59509'])
+    subprocess.run(['heroku', 'ps:scale', 'clock=1', '-a', HEROKU_APP_NAME])
 else:
     while True:
         try:
