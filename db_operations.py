@@ -1,5 +1,6 @@
 import settings
 import psycopg2 as connector
+from datetime import datetime
 
 
 class Connection:
@@ -16,7 +17,8 @@ class Connection:
         self.cursor.execute(query)
         return self.cursor  # [[id, created, price]]
 
-    def set_timestamp(self, created, price, table):
+    def set_timestamp(self, price, table):
+        created = datetime.now()
         query = 'INSERT INTO {table} (created, price) VALUES (%(created)s, %(price)s);'.format(table=table)
         data = {'created': created, 'price': price}
 
@@ -30,13 +32,13 @@ class Connection:
         self.cursor.execute(query, data)
         self.cnt.commit()
 
-    def get_price_data(self):
-        query = 'SELECT * FROM index_minimal_sell_price;'
+    def get_price_data(self, table):
+        query = 'SELECT * FROM {table};'.format(table=table)
 
         self.cursor.execute(query)
         return self.cursor  # [[price, buy_price, buy_amount]]
 
-    def set_price_data(self, average_price, buy_price, buy_amount):
+    def update_price_data(self, average_price, buy_price, buy_amount):
         query = 'UPDATE index_minimal_sell_price SET' \
                 'price=%(average_price)s,' \
                 'buy_price=%(buy_price)s,' \

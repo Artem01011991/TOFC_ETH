@@ -18,3 +18,8 @@ USER_WMID = config('USER_WMID') if LOCAL else os.environ['USER_WMID']
 DATABASE_URL = config('DATABASE_URL') if LOCAL else os.environ['DATABASE_URL']
 BINANCE_APIKEY = config('BINANCE_APIKEY') if LOCAL else os.environ['BINANCE_APIKEY']
 BINANCE_SECRETKEY = config('BINANCE_SECRETKEY') if LOCAL else os.environ['BINANCE_SECRETKEY']
+
+BINANCE_SELL_PRICE_TABLE = 'binance_minimal_sell_price'
+BINANCE_PRICE_STAMP_TABLE = 'binance_price_stamp'
+INDEX_SELL_PRICE_TABLE = 'index_minimal_sell_price'
+INDEX_PRICE_STAMP_TABLE = 'index_price_stamp'
