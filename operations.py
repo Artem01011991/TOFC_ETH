@@ -45,10 +45,19 @@ class OperationsBaseClass:
 
 class BinanceOpirationsClass(OperationsBaseClass):
 
-    def __init__(self, timestamp_list, purchase_data=None, db_data=None):
+    def __init__(self, timestamp_list, purchase_data=None, client_data=None):
         super(BinanceOpirationsClass, self).__init__(timestamp_list)
-        if purchase_data and db_data:
-            self.average_price = self._average_price(purchase_data, db_data)
+        if purchase_data and client_data:
+            self.minimal_price = self._minimal_price(purchase_data, client_data)
 
-    def _average_price(self, purchase_data: (qunt, price,), db_data: (qunt, price,)):
-        pass
+    def _minimal_price(self, purchase_data: ('quntity', 'price',), client_data: ('quntity', 'price',)):
+        '''
+
+        :param purchase_data: data that is got by sale
+        :param client_data: data that is stored in DB
+        :return: minimal price which is necessary for get back entire amount of money
+        '''
+        purchase_entire_price = purchase_data[0] * purchase_data[1]
+        client_data_entire_price = client_data[0] * client_data[1]
+        amount_of_symbol = purchase_data[0] + client_data[0]
+        return (purchase_entire_price + client_data_entire_price) / amount_of_symbol

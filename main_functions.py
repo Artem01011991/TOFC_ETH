@@ -105,7 +105,7 @@ def main_binance():
     #
     # if largest_prices['ids']:
     #     db_connection.delete_timestamp_data(largest_prices['ids'], 'binance_price_stamp')
-    binance_api_connection = BinanceCoreApi(settings.BINANCE_APIKEY, settings.BINANCE_SECRETKEY, 'ETHUSDT')
+    binance_api_connection = BinanceCoreApi(settings.BINANCE_APIKEY, settings.BINANCE_SECRETKEY, settings.BINANCE_API_SYMBOL)
     symbol_info = binance_api_connection.symbol_price_ticker()
 
     db_connection = Connection()
@@ -117,14 +117,14 @@ def main_binance():
     sell_order = next((i for i in client_orders if i['side'] == 'SELL'), None)
 
     client_data = binance_api_connection.account_information()
+    client_symbol_balance = next((i for i in client_data['balances'] if i['asset'] == settings.BINANCE_CLIENT_BALANCE_SYMBOL), None)
     db_minimal_price = db_connection.get_price_data(settings.BINANCE_SELL_PRICE_TABLE).fetchall()
     if db_minimal_price:
-        if buy_order and db_minimal_price[2] != buy_order['executedQty']:
-
+        if client_symbol_balance and buy_order and db_minimal_price[2] != buy_order['executedQty']:
             operations = BinanceOpirationsClass(
                 list_timestampe,
                 (buy_order['executedQty'], buy_order['price'],),
-                (, db_minimal_price[0],)
+                (client_symbol_balance['locked'], db_minimal_price[0],)
             )
     else:
         operations = BinanceOpirationsClass(list_timestampe)

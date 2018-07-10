@@ -10,16 +10,25 @@ except:
     DEBUG = False
     LOCAL = False
 
+# Heroku settings
 HEROKU_APP_NAME = 'immense-eyrie-59509'
+DATABASE_URL = config('DATABASE_URL') if LOCAL else os.environ['DATABASE_URL']
 
+# Index settings
 USER_LOGIN = config('USER_LOGIN') if LOCAL else os.environ['USER_LOGIN']
 USER_PASS = config('USER_PASS') if LOCAL else os.environ['USER_PASS']
 USER_WMID = config('USER_WMID') if LOCAL else os.environ['USER_WMID']
-DATABASE_URL = config('DATABASE_URL') if LOCAL else os.environ['DATABASE_URL']
+
+# Binance settings
 BINANCE_APIKEY = config('BINANCE_APIKEY') if LOCAL else os.environ['BINANCE_APIKEY']
 BINANCE_SECRETKEY = config('BINANCE_SECRETKEY') if LOCAL else os.environ['BINANCE_SECRETKEY']
+BINANCE_API_SYMBOL = 'ETHUSDT'
 
+# DB settings
 BINANCE_SELL_PRICE_TABLE = 'binance_minimal_sell_price'
 BINANCE_PRICE_STAMP_TABLE = 'binance_price_stamp'
 INDEX_SELL_PRICE_TABLE = 'index_minimal_sell_price'
 INDEX_PRICE_STAMP_TABLE = 'index_price_stamp'
+
+# Client settings
+BINANCE_CLIENT_BALANCE_SYMBOL = 'LTC'
