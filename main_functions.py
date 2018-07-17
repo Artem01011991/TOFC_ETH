@@ -92,30 +92,22 @@ def main_index():
 
 
 def main_binance():
-    # binance_api_connection = BinanceCoreApi(settings.BINANCE_APIKEY, settings.BINANCE_SECRETKEY, 'ETHUSDT')
-    # symbol_info = binance_api_connection.symbol_price_ticker()
-    # db_connection = Connection()
-    # date_time_now = datetime.now()
-    # operations = Operations()
-    #
-    # db_connection.set_timestamp(date_time_now, symbol_info['price'], 'binance_price_stamp')
-    #
-    # list_timestampe = db_connection.get_timestamp_data('binance_price_stamp').fetchall()
-    # largest_prices = operations.largest_prices(list_timestampe)
-    #
-    # if largest_prices['ids']:
-    #     db_connection.delete_timestamp_data(largest_prices['ids'], 'binance_price_stamp')
     binance_api_connection = BinanceCoreApi(settings.BINANCE_APIKEY, settings.BINANCE_SECRETKEY, settings.BINANCE_API_SYMBOL)
     symbol_info = binance_api_connection.symbol_price_ticker()
-
     db_connection = Connection()
+
+    # set new timestamp
     db_connection.set_timestamp(symbol_info['price'], settings.BINANCE_PRICE_STAMP_TABLE)
+
+    # get timestamp data
     list_timestampe = db_connection.get_timestamp_data(settings.BINANCE_PRICE_STAMP_TABLE).fetchall()
 
+    # get current buy and sell orders info
     client_orders = binance_api_connection.current_open_orders()
     buy_order = next((i for i in client_orders if i['side'] == 'BUY'), None)
     sell_order = next((i for i in client_orders if i['side'] == 'SELL'), None)
 
+    # logic for minimal sell price
     client_data = binance_api_connection.account_information()
     client_symbol_balance = next((i for i in client_data['balances'] if i['asset'] == settings.BINANCE_CLIENT_BALANCE_SYMBOL), None)
     db_minimal_price = db_connection.get_price_data(settings.BINANCE_SELL_PRICE_TABLE).fetchall()
@@ -129,6 +121,7 @@ def main_binance():
     else:
         operations = BinanceOpirationsClass(list_timestampe)
 
+    # delete deprecated timestamps
     if operations.timestamp_ids:
         db_connection.delete_timestamp_data(operations.timestamp_ids, settings.BINANCE_PRICE_STAMP_TABLE)
 

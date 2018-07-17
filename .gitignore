@@ -4,4 +4,3 @@ __pycache__/
 .idea/
 old_solutions/
 local_settings.py
-test.py
