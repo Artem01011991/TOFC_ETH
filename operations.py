@@ -5,7 +5,7 @@ class OperationsBaseClass:
     date_time_now = datetime.now()
 
     def __init__(self, timestamp_list):
-        self.max_price, self.prior_max_price, self.timestamp_ids = self._largest_prices(timestamp_list)
+        self.max_price, self.prior_max_price, self.timestamp_ids = self._largest_prices(timestamp_list).values()
 
     def _largest_prices(self, timestamp_list):
         '''
@@ -41,6 +41,9 @@ class OperationsBaseClass:
             max_count[0], prior_max_count[0] = prior_max_count[0], max_count[0]
 
         return {'max': max_count, 'prior_max': prior_max_count, 'ids': ids_for_delete}
+
+    def buy(self, current_price):
+        pass
 
 
 class BinanceOpirationsClass(OperationsBaseClass):

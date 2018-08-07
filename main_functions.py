@@ -111,10 +111,11 @@ def main_binance():
     client_data = binance_api_connection.account_information()
     client_symbol_balance = next((i for i in client_data['balances'] if i['asset'] == settings.BINANCE_CLIENT_BALANCE_SYMBOL), None)
     db_minimal_price = db_connection.get_price_data(settings.BINANCE_SELL_PRICE_TABLE).fetchall()
+
     if db_minimal_price:
         if client_symbol_balance and buy_order and db_minimal_price[2] != buy_order['executedQty']:
             operations = BinanceOpirationsClass(
-                list_timestampe,
+                list_timestampe,  # for frequency range determination
                 (buy_order['executedQty'], buy_order['price'],),
                 (client_symbol_balance['locked'], db_minimal_price[0],)
             )
@@ -125,3 +126,5 @@ def main_binance():
     if operations.timestamp_ids:
         db_connection.delete_timestamp_data(operations.timestamp_ids, settings.BINANCE_PRICE_STAMP_TABLE)
 
+    # buy logic
+    
