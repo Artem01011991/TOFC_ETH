@@ -42,8 +42,6 @@ class OperationsBaseClass:
 
         return {'max': max_count, 'prior_max': prior_max_count, 'ids': ids_for_delete}
 
-    def buy(self, current_price):
-        pass
 
 
 class BinanceOpirationsClass(OperationsBaseClass):

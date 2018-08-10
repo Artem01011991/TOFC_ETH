@@ -120,11 +120,17 @@ def main_binance():
                 (client_symbol_balance['locked'], db_minimal_price[0],)
             )
     else:
-        operations = BinanceOpirationsClass(list_timestampe)
+        operations = BinanceOpirationsClass(list_timestampe)  # If no minimal price in database.
 
     # delete deprecated timestamps
     if operations.timestamp_ids:
-        db_connection.delete_timestamp_data(operations.timestamp_ids, settings.BINANCE_PRICE_STAMP_TABLE)
+        db_connection.delete_timestamp_data(operations.timestamp_ids, settings.BINANCE_PRICE_STAMP_TABLE['ETC'])
 
     # buy logic
-    
+    if operations.max_price >= symbol_info['price'] >= operations.prior_max_price:  # checking for allowable price for buying
+        binance_api_connection.new_order(
+            settings.BINANCE_CLIENT_SIDE[0],
+            settings.BINANCE_CLIENT_ORDER_TYPE,
+            settings.BINANCE_CLIENT_ORDER_OPTIONS, ,
+            symbol_info['price']
+        )
