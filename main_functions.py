@@ -109,7 +109,7 @@ def main_binance():
 
     # logic for minimal sell price
     client_data = binance_api_connection.account_information()
-    client_symbol_balance = next((i for i in client_data['balances'] if i['asset'] == settings.BINANCE_CLIENT_BALANCE_SYMBOL), None)
+    client_symbol_balance = next((i for i in client_data['balances'] if i['asset'] == settings.BINANCE_CLIENT_BALANCE_SYMBOL['ETH']), None)
     db_minimal_price = db_connection.get_price_data(settings.BINANCE_SELL_PRICE_TABLE).fetchall()
 
     if db_minimal_price:
@@ -128,9 +128,18 @@ def main_binance():
 
     # buy logic
     if operations.max_price >= symbol_info['price'] >= operations.prior_max_price:  # checking for allowable price for buying
-        binance_api_connection.new_order(
-            settings.BINANCE_CLIENT_SIDE[0],
-            settings.BINANCE_CLIENT_ORDER_TYPE,
-            settings.BINANCE_CLIENT_ORDER_OPTIONS, ,
-            symbol_info['price']
+        client_utc = next(
+            (i for i in client_data['balances'] if i['asset'] == settings.BINANCE_CLIENT_BALANCE_SYMBOL['UTC']),
+            None
         )
+        if client_utc:
+            binance_api_connection.new_order(
+                settings.BINANCE_CLIENT_SIDE[0],
+                settings.BINANCE_CLIENT_ORDER_TYPE,
+                settings.BINANCE_CLIENT_ORDER_OPTIONS,
+                client_utc['free'] / symbol_info['price'],
+                symbol_info['price']
+            )
+
+    # sell logic
+
