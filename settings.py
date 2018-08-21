@@ -25,13 +25,13 @@ BINANCE_SECRETKEY = config('BINANCE_SECRETKEY') if LOCAL else os.environ['BINANC
 BINANCE_API_SYMBOL = 'ETHUSDT'
 
 # DB settings
-BINANCE_SELL_PRICE_TABLE = 'binance_minimal_sell_price'
-BINANCE_PRICE_STAMP_TABLE = 'binance_price_stamp'
+BINANCE_TABLES = {'binance_minimal_sell_price': 'binance_minimal_sell_price', 'binance_price_stamp': 'binance_price_stamp'}
 INDEX_SELL_PRICE_TABLE = 'index_minimal_sell_price'
 INDEX_PRICE_STAMP_TABLE = 'index_price_stamp'
 
 # Client settings
 BINANCE_CLIENT_BALANCE_SYMBOL = {'ETC': 'ETC', 'UTC': 'UTC'}
-BINANCE_CLIENT_SIDE = ['BUY', 'SELL']
+BINANCE_CLIENT_SIDE = {'BUY': 'BUY', 'SELL': 'SELL'}
 BINANCE_CLIENT_ORDER_TYPE = 'LIMIT'
 BINANCE_CLIENT_ORDER_OPTIONS = 'GTC'
+BINANCE_CLIENT_NEW_ORDER_RESPONSE_TYPE = {'ACK': 'ACK', 'RESULT': 'RESULT', 'FULL': 'FULL'}
