@@ -8,7 +8,7 @@ import settings
 
 class BinanceCoreApi:
 
-    def __init__(self, apikey, secretkey, symbol):
+    def __init__(self, apikey, secretkey, symbol, debug_mode=False):
         self.apikey = apikey
         self.secretkey = secretkey
         self.symbol = symbol
@@ -20,6 +20,7 @@ class BinanceCoreApi:
         self.timestamp = str(int(round(time.time() * 1000)))
         self.head = 'https://api.binance.com'
         self.header = {'X-MBX-APIKEY': self.apikey}
+        self.debug_mode = debug_mode
 
     def test_connectivity(self):
         """
@@ -380,8 +381,6 @@ class BinanceCoreApi:
                   ]
                 }
         """
-        # body = 'api/v3/order'
-        body = 'api/v3/order/test'
         data = {
             'symbol': self.symbol,
             'side': side,
@@ -394,15 +393,20 @@ class BinanceCoreApi:
             # 'newOrderRespType': newOrderRespType,
             'timestamp': self.timestamp,
         }
-        signature = hmac.new(
-                self.secretkey.encode(),
-                '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
-                digestmod=hashlib.sha256
-            ).hexdigest()
 
-        data.update({'signature': signature})
+        if not self.debug_mode:
+            body = 'api/v3/order'
+            # body = 'api/v3/order/test'
+            signature = hmac.new(
+                    self.secretkey.encode(),
+                    '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
+                    digestmod=hashlib.sha256
+                ).hexdigest()
 
-        return request('post', path.join(self.head, body), data=data, headers=self.header).json()
+            data.update({'signature': signature})
+
+            return request('post', path.join(self.head, body), data=data, headers=self.header).json()
+        return data
 
     def cancel_order(self, orderId=None):
         """

@@ -1,9 +1,9 @@
-import subprocess
+from sched_functions import sched_job
+from controling_opirations import modules_manipulations
+import settings
+import configparser
 import logging
 import sys
-import settings
-from sched_functions import sched_job
-from main_functions import main_index, main_binance
 
 
 log = logging.getLogger()
@@ -15,12 +15,16 @@ chanel.setFormatter(formatter)
 log.addHandler(chanel)
 
 
-if settings.DEBUG:
-    subprocess.run(['heroku', 'ps:scale', 'clock=0', '-a', settings.HEROKU_APP_NAME])
-    log.info('*******INDEX********')
-    main_index()
-    log.info('*******BINANCE********')
-    main_binance()
-    subprocess.run(['heroku', 'ps:scale', 'clock=1', '-a', settings.HEROKU_APP_NAME])
-else:
+try:
     sched_job.start()
+except:
+    conf = configparser.ConfigParser()
+    conf.read(settings.CONFIG_FILE_NAME)
+    for i in settings.CONFIG_MODULES_OPTION_NAME:
+        conf[i] = 'false'
+
+    with open(settings.CONFIG_FILE_NAME, 'w') as ini_file:
+        conf.write(ini_file)
+        ini_file.close()
+
+    modules_manipulations({settings.SCHEDULER_IDS['binance']: False, settings.SCHEDULER_IDS['index']: False})

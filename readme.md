@@ -1,1 +1,0 @@
-For activating 'debug mode' add local_settings.py to root direction and add 'DEBUG' variable with value 'True'.

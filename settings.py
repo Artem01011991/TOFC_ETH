@@ -25,7 +25,10 @@ BINANCE_SECRETKEY = config('BINANCE_SECRETKEY') if LOCAL else os.environ['BINANC
 BINANCE_API_SYMBOL = 'ETHUSDT'
 
 # DB settings
-BINANCE_TABLES = {'binance_minimal_sell_price': 'binance_minimal_sell_price', 'binance_price_stamp': 'binance_price_stamp'}
+BINANCE_TABLES = {
+    'binance_minimal_sell_price': 'binance_minimal_sell_price',
+    'binance_price_stamp': 'binance_price_stamp'
+}
 INDEX_SELL_PRICE_TABLE = 'index_minimal_sell_price'
 INDEX_PRICE_STAMP_TABLE = 'index_price_stamp'
 
@@ -35,3 +38,11 @@ BINANCE_CLIENT_SIDE = {'BUY': 'BUY', 'SELL': 'SELL'}
 BINANCE_CLIENT_ORDER_TYPE = 'LIMIT'
 BINANCE_CLIENT_ORDER_OPTIONS = 'GTC'
 BINANCE_CLIENT_NEW_ORDER_RESPONSE_TYPE = {'ACK': 'ACK', 'RESULT': 'RESULT', 'FULL': 'FULL'}
+
+# Module settings
+SCHEDULER_IDS = {'index': 'index', 'binance': 'binance'}
+CONFIG_MODULES_OPTION_NAME = {
+    'Index activation mode': 'Index activation mode',
+    'Binance activation mode': 'Binance activation mode'
+}
+CONFIG_FILE_NAME = 'config.ini'

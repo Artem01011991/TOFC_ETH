@@ -92,7 +92,7 @@ def main_index():
 
 
 def main_binance():
-    binance_api_connection = BinanceCoreApi(settings.BINANCE_APIKEY, settings.BINANCE_SECRETKEY, settings.BINANCE_API_SYMBOL)
+    binance_api_connection = BinanceCoreApi(settings.BINANCE_APIKEY, settings.BINANCE_SECRETKEY, settings.BINANCE_API_SYMBOL, settings.DEBUG)
     symbol_info = binance_api_connection.symbol_price_ticker()
     db_connection = Connection()
 
