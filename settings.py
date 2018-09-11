@@ -11,7 +11,6 @@ except:
     LOCAL = False
 
 # Heroku settings
-HEROKU_APP_NAME = 'immense-eyrie-59509'
 DATABASE_URL = config('DATABASE_URL') if LOCAL else os.environ['DATABASE_URL']
 
 # Index settings
