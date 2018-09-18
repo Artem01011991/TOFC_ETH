@@ -10,20 +10,20 @@ except:
     DEBUG = False
     LOCAL = False
 
-# Heroku settings
+# Heroku config
 DATABASE_URL = config('DATABASE_URL') if LOCAL else os.environ['DATABASE_URL']
 
-# Index settings
+# Index config
 USER_LOGIN = config('USER_LOGIN') if LOCAL else os.environ['USER_LOGIN']
 USER_PASS = config('USER_PASS') if LOCAL else os.environ['USER_PASS']
 USER_WMID = config('USER_WMID') if LOCAL else os.environ['USER_WMID']
 
-# Binance settings
+# Binance config
 BINANCE_APIKEY = config('BINANCE_APIKEY') if LOCAL else os.environ['BINANCE_APIKEY']
 BINANCE_SECRETKEY = config('BINANCE_SECRETKEY') if LOCAL else os.environ['BINANCE_SECRETKEY']
 BINANCE_API_SYMBOL = 'ETHUSDT'
 
-# DB settings
+# DB config
 BINANCE_TABLES = {
     'binance_minimal_sell_price': 'binance_minimal_sell_price',
     'binance_price_stamp': 'binance_price_stamp'
@@ -31,14 +31,14 @@ BINANCE_TABLES = {
 INDEX_SELL_PRICE_TABLE = 'index_minimal_sell_price'
 INDEX_PRICE_STAMP_TABLE = 'index_price_stamp'
 
-# Client settings
+# Client config
 BINANCE_CLIENT_BALANCE_SYMBOL = {'ETC': 'ETC', 'UTC': 'UTC'}
 BINANCE_CLIENT_SIDE = {'BUY': 'BUY', 'SELL': 'SELL'}
 BINANCE_CLIENT_ORDER_TYPE = 'LIMIT'
 BINANCE_CLIENT_ORDER_OPTIONS = 'GTC'
 BINANCE_CLIENT_NEW_ORDER_RESPONSE_TYPE = {'ACK': 'ACK', 'RESULT': 'RESULT', 'FULL': 'FULL'}
 
-# Module settings
+# Module config
 SCHEDULER_IDS = {'index': 'index', 'binance': 'binance'}
 CONFIG_MODULES_OPTION_NAME = {
     'Index activation mode': 'Index activation mode',
