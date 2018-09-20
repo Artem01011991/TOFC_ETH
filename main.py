@@ -14,12 +14,18 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 chanel.setFormatter(formatter)
 log.addHandler(chanel)
 
+conf = configparser.ConfigParser()
+conf.read(settings.CONFIG_FILE_NAME)
+disabled_modules = {k: v for k, v in (
+    (settings.SCHEDULER_IDS['binance'], conf['Bot section'].getboolen('binance activation mode'),),
+    (settings.SCHEDULER_IDS['index'], conf['Bot section'].getboolen('index activation mode'),),) if not v}
+
+if disabled_modules:   # for modules with value 'False'
+    modules_manipulations(disabled_modules)
 
 try:
     sched_job.start()
 except:
-    conf = configparser.ConfigParser()
-    conf.read(settings.CONFIG_FILE_NAME)
     for i in settings.CONFIG_MODULES_OPTION_NAME:
         conf[i] = 'false'
 
