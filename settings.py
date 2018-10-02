@@ -11,6 +11,7 @@ except:
     LOCAL = False
 
 # Heroku config
+HEROKU_APP_NAME = 'immense-eyrie-59509'
 DATABASE_URL = config('DATABASE_URL') if LOCAL else os.environ['DATABASE_URL']
 
 # Index config
@@ -45,3 +46,9 @@ CONFIG_MODULES_OPTION_NAME = {
     'Binance activation mode': 'Binance activation mode'
 }
 CONFIG_FILE_NAME = 'config.ini'
+CONF_PATH = os.path.join(os.path.dirname(__file__), CONFIG_FILE_NAME)
+CONFIG_NAME_BY_ID = {
+            'index_bot_control': 'index activation mode',
+            'binance_bot_control': 'binance activation mode',
+            'dj_control': 'django control'
+        }
