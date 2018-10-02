@@ -1,4 +1,4 @@
-from sched_functions import sched_job
+from .sched_functions import sched_job
 
 
 def modules_manipulations(opirations):

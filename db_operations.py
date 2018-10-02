@@ -1,6 +1,6 @@
-import settings
-import psycopg2 as connector
+from dj_app.TOFC_ETH import settings
 from datetime import datetime
+import psycopg2 as connector
 
 
 class Connection:

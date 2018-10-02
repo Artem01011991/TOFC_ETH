@@ -1,5 +1,5 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-from main_functions import main_index, main_binance
+from .main_functions import main_index, main_binance
 
 
 sched_job = BlockingScheduler()

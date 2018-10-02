@@ -1,9 +1,9 @@
-import core_api
+from dj_app.TOFC_ETH import core_api
 import time
-import settings
-from db_operations import Connection
-from core_binance_api import BinanceCoreApi
-from operations import OperationsBaseClass, BinanceOpirationsClass
+from dj_app.TOFC_ETH import settings
+from .db_operations import Connection
+from .core_binance_api import BinanceCoreApi
+from .operations import OperationsBaseClass, BinanceOpirationsClass
 
 
 def delay_func(func, *args, **kwargs):
