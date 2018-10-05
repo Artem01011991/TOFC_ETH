@@ -1,9 +1,9 @@
 from dj_app.TOFC_ETH import core_api
-import time
 from dj_app.TOFC_ETH import settings
 from .db_operations import Connection
 from .core_binance_api import BinanceCoreApi
 from .operations import OperationsBaseClass, BinanceOpirationsClass
+import time
 
 
 def delay_func(func, *args, **kwargs):
@@ -92,7 +92,12 @@ def main_index():
 
 
 def main_binance():
-    binance_api_connection = BinanceCoreApi(settings.BINANCE_APIKEY, settings.BINANCE_SECRETKEY, settings.BINANCE_API_SYMBOL, settings.DEBUG)
+    binance_api_connection = BinanceCoreApi(
+        settings.BINANCE_APIKEY,
+        settings.BINANCE_SECRETKEY,
+        settings.BINANCE_API_SYMBOL,
+        settings.DEBUG
+    )
     symbol_info = binance_api_connection.symbol_price_ticker()
     db_connection = Connection()
 
