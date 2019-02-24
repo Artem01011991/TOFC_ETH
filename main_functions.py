@@ -1,9 +1,10 @@
-from TOFC_ETH import core_api
-from TOFC_ETH import settings
-from .db_operations import Connection
-from .core_binance_api import BinanceCoreApi
-from .operations import OperationsBaseClass, BinanceOpirationsClass
 import time
+
+from TOFC_ETH import core_api, settings
+
+from .core_binance_api import BinanceCoreApi
+from .db_operations import Connection
+from .operations import BinanceOpirationsClass, OperationsBaseClass
 
 
 def delay_func(func, *args, **kwargs):
@@ -110,11 +111,14 @@ def main_binance():
     # get current buy and sell orders info
     client_orders = binance_api_connection.current_open_orders()
     buy_order = next((i for i in client_orders if i['side'] == 'BUY'), None)
-    sell_order = next((i for i in client_orders if i['side'] == 'SELL'), None)
+    next((i for i in client_orders if i['side'] == 'SELL'), None)  # sell_order
 
     # logic for minimal sell price
     client_data = binance_api_connection.account_information()
-    client_symbol_balance = next((i for i in client_data['balances'] if i['asset'] == settings.BINANCE_CLIENT_BALANCE_SYMBOL['ETH']), None)
+    client_symbol_balance = next(
+        (i for i in client_data['balances'] if i['asset'] == settings.BINANCE_CLIENT_BALANCE_SYMBOL['ETH']),
+        None
+    )
     db_minimal_price = db_connection.get_price_data(settings.BINANCE_TABLES['binance_minimal_sell_price']).fetchall()
 
     if db_minimal_price:
@@ -132,7 +136,8 @@ def main_binance():
         db_connection.delete_timestamp_data(operations.timestamp_ids, settings.BINANCE_TABLES['binance_price_stamp'])
 
     # buy logic
-    if operations.max_price >= symbol_info['price'] >= operations.prior_max_price:  # checking for allowable price for buying
+    # checking for allowable price for buying
+    if operations.max_price >= symbol_info['price'] >= operations.prior_max_price:
         client_utc = next(
             (i for i in client_data['balances'] if i['asset'] == settings.BINANCE_CLIENT_BALANCE_SYMBOL['UTC']),
             None

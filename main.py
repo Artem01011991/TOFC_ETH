@@ -1,10 +1,10 @@
-from sched_functions import sched_job
-from controling_opirations import modules_manipulations
-import settings
 import configparser
 import logging
 import sys
 
+import settings
+from TOFC_ETH.controling_opirations import modules_manipulations
+from TOFC_ETH.sched_functions import sched_job
 
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)
@@ -18,14 +18,15 @@ conf = configparser.ConfigParser()
 conf.read(settings.CONFIG_FILE_NAME)
 disabled_modules = {k: v for k, v in (
     (settings.SCHEDULER_IDS['binance'], conf['Bot section'].getboolen('binance activation mode'),),
-    (settings.SCHEDULER_IDS['index'], conf['Bot section'].getboolen('index activation mode'),),) if not v}  # modules which shoud be disabled
+    # modules which shoud be disabled
+    (settings.SCHEDULER_IDS['index'], conf['Bot section'].getboolen('index activation mode'),),) if not v}
 
 if disabled_modules:   # for modules with value 'False'
     modules_manipulations(disabled_modules)
 
 try:
     sched_job.start()
-except:
+except Exception:
     for i in settings.CONFIG_MODULES_OPTION_NAME:
         conf[i] = 'false'
 

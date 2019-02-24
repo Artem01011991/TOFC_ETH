@@ -1,12 +1,12 @@
 import os
-from decouple import config
 
+from decouple import config
 
 try:
     import local_settings
     DEBUG = local_settings.DEBUG
     LOCAL = local_settings.LOCAL
-except:
+except ImportError:
     DEBUG = False
     LOCAL = False
 

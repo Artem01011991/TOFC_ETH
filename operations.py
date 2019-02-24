@@ -43,7 +43,6 @@ class OperationsBaseClass:
         return {'max': max_count, 'prior_max': prior_max_count, 'ids': ids_for_delete}
 
 
-
 class BinanceOpirationsClass(OperationsBaseClass):
 
     def __init__(self, timestamp_list, purchase_data=None, client_data=None):

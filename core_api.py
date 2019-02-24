@@ -1,7 +1,8 @@
-import requests
 import base64
 import hashlib
 import time
+
+import requests
 
 
 class IndexInfo:
@@ -62,17 +63,28 @@ class IndexInfo:
             price='0',
             offer_id=None
     ):
-        return requests.post(url, json=self._form_request(wmid, ID, date_from, date_to, count, is_anonymous, is_bid, price, offer_id)).json()
+        return requests.post(url, json=self._form_request(
+            wmid,
+            ID,
+            date_from,
+            date_to,
+            count,
+            is_anonymous,
+            is_bid,
+            price,
+            offer_id
+        )).json()
 
-    def _form_request(self, wmid, ID, date_from, date_to, count, is_anonymous, is_bid , price, offer_id):
-        return {"ApiContext": {
+    def _form_request(self, wmid, ID, date_from, date_to, count, is_anonymous, is_bid, price, offer_id):
+        return {
+            "ApiContext": {
                 "Login": self.login,
                 "Password": self.password,
                 "Culture": self.culture,
                 "Wmid": self.wmid,
                 "Signature": self._get_signature(wmid, ID, date_from, date_to, offer_id),
             },
-            "Trading":{
+            "Trading": {
                 "ID": ID,
                 "DateStart": date_from,  # YYYYMMDD
                 "DateEnd": date_to,  # YYYYMMDD
@@ -93,11 +105,23 @@ class IndexInfo:
         [{'id': 1358784, 'stamp': 1522603074, 'name': 'ETH.ECU', 'isbid': 1, 'notes': 30, 'price': 0.3794},
          {'id': 1358783, 'stamp': 1522603074, 'name': 'ETH.ECU', 'isbid': 1, 'notes': 20, 'price': 0.3793}]
         '''
-        result = self._get_request(self.urls['history trading'], wmid=self.wmid, ID=self.ID, date_from=date_from, date_to=date_to)
+        result = self._get_request(
+            self.urls['history trading'],
+            wmid=self.wmid,
+            ID=self.ID,
+            date_from=date_from,
+            date_to=date_to
+        )
         return result.get('value') if isinstance(result, dict) else result
 
     def get_history_transaction(self, date_from, date_to):
-        result = self._get_request(self.urls['history transaction'], wmid=self.wmid, ID=self.ID, date_from=date_from, date_to=date_to)
+        result = self._get_request(
+            self.urls['history transaction'],
+            wmid=self.wmid,
+            ID=self.ID,
+            date_from=date_from,
+            date_to=date_to
+        )
         return result.get('value') if isinstance(result, dict) else result
 
     def get_offer_my(self):

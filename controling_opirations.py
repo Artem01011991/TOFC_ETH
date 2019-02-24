@@ -7,8 +7,8 @@ def modules_manipulations(opirations):
     :param opirations: {job_id: enabling(true|false)}
     :return:
     '''
-    for i in opirations:
-        if opirations[i]:
-            sched_job.resume_job(job_id=i)
+    for opiration in opirations:
+        if opirations[opiration]:
+            sched_job.resume_job(job_id=opiration)
         else:
-            sched_job.pause_job(job_id=i)
+            sched_job.pause_job(job_id=opiration)
