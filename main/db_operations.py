@@ -2,7 +2,7 @@ from datetime import datetime
 
 import psycopg2 as connector
 
-from TOFC_ETH import settings
+from TOFC_ETH.main import settings
 
 
 class Connection:

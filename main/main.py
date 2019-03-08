@@ -2,9 +2,9 @@ import configparser
 import logging
 import sys
 
-import settings
-from TOFC_ETH.controling_opirations import modules_manipulations
-from TOFC_ETH.sched_functions import sched_job
+from TOFC_ETH.main import settings
+from TOFC_ETH.main.modules_control import modules_manipulations
+from TOFC_ETH.main.sched_functions import sched_job
 
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)
@@ -18,7 +18,7 @@ conf = configparser.ConfigParser()
 conf.read(settings.CONFIG_FILE_NAME)
 disabled_modules = {k: v for k, v in (
     (settings.SCHEDULER_IDS['binance'], conf['Bot section'].getboolen('binance activation mode'),),
-    # modules which shoud be disabled
+    # modules that should be disabled
     (settings.SCHEDULER_IDS['index'], conf['Bot section'].getboolen('index activation mode'),),) if not v}
 
 if disabled_modules:   # for modules with value 'False'

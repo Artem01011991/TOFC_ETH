@@ -5,7 +5,7 @@ from os import path
 
 from requests import request
 
-from TOFC_ETH import settings
+from TOFC_ETH.binance import settings
 
 
 class BinanceCoreApi:
