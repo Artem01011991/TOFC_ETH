@@ -33,4 +33,3 @@ class Operations:
             max_count[0], prior_max_count[0] = prior_max_count[0], max_count[0]
 
         return {'max': max_count, 'prior_max': prior_max_count, 'ids': ids_for_delete}
-

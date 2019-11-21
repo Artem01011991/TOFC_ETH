@@ -1,10 +1,11 @@
-import core_api
 import time
-import settings
-from db_operations import Connection
-from core_binance_api import BinanceCoreApi
-from operations import Operations
 from datetime import datetime
+
+import core_api
+import settings
+from core_binance_api import BinanceCoreApi
+from db_operations import Connection
+from operations import Operations
 
 
 def delay_func(func, *args, **kwargs):

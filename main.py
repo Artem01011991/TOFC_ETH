@@ -1,9 +1,9 @@
-import subprocess
 import logging
+import subprocess
 import sys
+
 import settings
 from sched_functions import sched_job
-
 
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)

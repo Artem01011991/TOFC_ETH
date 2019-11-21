@@ -1,5 +1,6 @@
-import settings
 import psycopg2 as connector
+
+import settings
 
 
 class Connection:
