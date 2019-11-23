@@ -1,20 +1,21 @@
-import os
-from decouple import config
+import environs
 
+env = environs.Env()
+environs.Env.read_env()
 
-try:
-    import local_settings
-    DEBUG = local_settings.DEBUG
-    LOCAL = local_settings.LOCAL
-except:
-    DEBUG = False
-    LOCAL = False
+root = environs.Path(__file__)
 
-HEROKU_APP_NAME = 'immense-eyrie-59509'
+# heroku
+HEROKU_APP_NAME = env('HEROKU_APP_NAME')
 
-USER_LOGIN = config('USER_LOGIN') if LOCAL else os.environ['USER_LOGIN']
-USER_PASS = config('USER_PASS') if LOCAL else os.environ['USER_PASS']
-USER_WMID = config('USER_WMID') if LOCAL else os.environ['USER_WMID']
-DATABASE_URL = config('DATABASE_URL') if LOCAL else os.environ['DATABASE_URL']
-BINANCE_APIKEY = config('BINANCE_APIKEY') if LOCAL else os.environ['BINANCE_APIKEY']
-BINANCE_SECRETKEY = config('BINANCE_SECRETKEY') if LOCAL else os.environ['BINANCE_SECRETKEY']
+# tradeX
+USER_LOGIN = env('USER_LOGIN')
+USER_PASS = env('USER_PASS')
+USER_WMID = env('USER_WMID')
+
+# db
+DATABASE_URL = env('DATABASE_URL')
+
+# binance
+BINANCE_APIKEY = env('BINANCE_APIKEY')
+BINANCE_SECRETKEY = env('BINANCE_SECRETKEY')
