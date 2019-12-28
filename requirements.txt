@@ -1,8 +1,12 @@
 requests
-psycopg2-binary
+
 APScheduler
 
 flake8
 isort
 
 environs
+
+# db section
+psycopg2-binary
+alembic

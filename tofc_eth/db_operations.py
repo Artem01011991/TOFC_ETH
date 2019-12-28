@@ -1,6 +1,6 @@
 import psycopg2 as connector
 
-import settings
+from tofc_eth.conf import settings
 
 
 class Connection:

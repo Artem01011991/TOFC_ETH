@@ -1,6 +1,6 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from main_functions import main_binance, main_index
+from tofc_eth.main_functions import main_binance, main_index
 
 sched_job = BlockingScheduler()
 

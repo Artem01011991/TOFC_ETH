@@ -1,9 +1,11 @@
 import environs
 
+# env vars assignment
 env = environs.Env()
 environs.Env.read_env()
 
-root = environs.Path(__file__)
+# project root
+root = environs.Path(__file__).parents[1]
 
 # heroku
 HEROKU_APP_NAME = env('HEROKU_APP_NAME')

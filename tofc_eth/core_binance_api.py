@@ -5,7 +5,7 @@ from os import path
 
 from requests import request
 
-import settings
+from tofc_eth.conf import settings
 
 
 class BinanceCoreApi:

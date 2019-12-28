@@ -1,11 +1,11 @@
 import time
 from datetime import datetime
 
-import core_api
-import settings
-from core_binance_api import BinanceCoreApi
-from db_operations import Connection
-from operations import Operations
+from tofc_eth import core_api
+from tofc_eth.conf import settings
+from tofc_eth.core_binance_api import BinanceCoreApi
+from tofc_eth.db_operations import Connection
+from tofc_eth.operations import Operations
 
 
 def delay_func(func, *args, **kwargs):
