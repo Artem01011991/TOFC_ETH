@@ -2,7 +2,6 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import create_engine
-
 from tofc_eth.conf import settings
 from tofc_eth.declarative_classes.common import Exchange, TimeStamp
 
