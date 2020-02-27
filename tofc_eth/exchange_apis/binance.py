@@ -9,7 +9,6 @@ from tofc_eth.conf import settings
 
 
 class BinanceCoreApi:
-
     def __init__(self, apikey, secretkey, symbol):
         self.apikey = apikey
         self.secretkey = secretkey
@@ -20,26 +19,26 @@ class BinanceCoreApi:
         # self.timeInForce = timeInForce
         # self.price = price
         self.timestamp = str(int(round(time.time() * 1000)))
-        self.head = 'https://api.binance.com'
-        self.header = {'X-MBX-APIKEY': self.apikey}
+        self.head = "https://api.binance.com"
+        self.header = {"X-MBX-APIKEY": self.apikey}
 
     def test_connectivity(self):
         """
 
         :return: {}
         """
-        body = 'api/v1/ping'
+        body = "api/v1/ping"
 
-        return request('get', path.join(self.head, body)).json()
+        return request("get", path.join(self.head, body)).json()
 
     def check_server_time(self):
         """
 
         :return: {"serverTime": 1499827319559}
         """
-        body = 'api/v1/time'
+        body = "api/v1/time"
 
-        return request('get', path.join(self.head, body)).json()
+        return request("get", path.join(self.head, body)).json()
 
     def exchange_information(self):
         """
@@ -90,9 +89,9 @@ class BinanceCoreApi:
               }]
             }
         """
-        body = 'api/v1/exchangeInfo'
+        body = "api/v1/exchangeInfo"
 
-        return request('get', path.join(self.head, body)).json()
+        return request("get", path.join(self.head, body)).json()
 
     def order_book(self, limit=100):
         """
@@ -116,10 +115,10 @@ class BinanceCoreApi:
                   ]
                 }
         """
-        body = 'api/v1/depth'
-        data = {'symbol': self.symbol, 'limit': limit}
+        body = "api/v1/depth"
+        data = {"symbol": self.symbol, "limit": limit}
 
-        return request('get', path.join(self.head, body), params=data).json()
+        return request("get", path.join(self.head, body), params=data).json()
 
     def recent_trades_list(self, limit=500):
         """
@@ -136,10 +135,10 @@ class BinanceCoreApi:
                   }
                 ]
         """
-        body = 'api/v1/trades'
-        data = {'symbol': self.symbol, 'limit': limit}
+        body = "api/v1/trades"
+        data = {"symbol": self.symbol, "limit": limit}
 
-        return request('get', path.join(self.head, body), params=data).json()
+        return request("get", path.join(self.head, body), params=data).json()
 
     def old_trade_lookup_market_data(self, limit=500, fromId=None):
         """
@@ -157,12 +156,16 @@ class BinanceCoreApi:
                   }
                 ]
         """
-        body = 'api/v1/historicalTrades'
-        data = {'symbol': self.symbol, 'limit': limit, 'fromId': fromId}
+        body = "api/v1/historicalTrades"
+        data = {"symbol": self.symbol, "limit": limit, "fromId": fromId}
 
-        return request('get', path.join(self.head, body), params=data, headers=self.header).json()
+        return request(
+            "get", path.join(self.head, body), params=data, headers=self.header
+        ).json()
 
-    def compressed_aggregate_trades_list(self, fromId=None, startTime=None, endTime=None, limit=500):
+    def compressed_aggregate_trades_list(
+        self, fromId=None, startTime=None, endTime=None, limit=500
+    ):
         """
 
         :param fromId:
@@ -182,12 +185,20 @@ class BinanceCoreApi:
                   }
                 ]
         """
-        body = 'api/v1/aggTrades'
-        data = {'symbol': self.symbol, 'limit': limit, 'fromId': fromId, 'startTime': startTime, 'endTime': endTime}
+        body = "api/v1/aggTrades"
+        data = {
+            "symbol": self.symbol,
+            "limit": limit,
+            "fromId": fromId,
+            "startTime": startTime,
+            "endTime": endTime,
+        }
 
-        return request('get', path.join(self.head, body), params=data).json()
+        return request("get", path.join(self.head, body), params=data).json()
 
-    def kline_candlestick_data(self, interval, limit=None, startTime=None, endTime=None):
+    def kline_candlestick_data(
+        self, interval, limit=None, startTime=None, endTime=None
+    ):
         """
 
         :param interval:
@@ -211,10 +222,16 @@ class BinanceCoreApi:
                   ]
                 ]
         """
-        body = 'api/v1/klines'
-        data = {'symbol': self.symbol, 'limit': limit, 'interval': interval, 'startTime': startTime, 'endTime': endTime}
+        body = "api/v1/klines"
+        data = {
+            "symbol": self.symbol,
+            "limit": limit,
+            "interval": interval,
+            "startTime": startTime,
+            "endTime": endTime,
+        }
 
-        return request('get', path.join(self.head, body), params=data).json()
+        return request("get", path.join(self.head, body), params=data).json()
 
     def hr24_ticker_price_change_statistics(self):
         """
@@ -241,9 +258,11 @@ class BinanceCoreApi:
                   "count": 76         // Trade count
                 }
         """
-        body = 'api/v1/ticker/24hr'
+        body = "api/v1/ticker/24hr"
 
-        return request('get', path.join(self.head, body), params={'symbol': self.symbol}).json()
+        return request(
+            "get", path.join(self.head, body), params={"symbol": self.symbol}
+        ).json()
 
     def symbol_price_ticker(self):
         """
@@ -253,9 +272,11 @@ class BinanceCoreApi:
                   "price": "4.00000200"
                 }
         """
-        body = 'api/v3/ticker/price'
+        body = "api/v3/ticker/price"
 
-        return request('get', path.join(self.head, body), params={'symbol': self.symbol}).json()
+        return request(
+            "get", path.join(self.head, body), params={"symbol": self.symbol}
+        ).json()
 
     def symbol_order_book_ticker(self):
         """
@@ -268,20 +289,22 @@ class BinanceCoreApi:
                   "askQty": "9.00000000"
                 }
         """
-        body = 'api/v3/ticker/bookTicker'
+        body = "api/v3/ticker/bookTicker"
 
-        return request('get', path.join(self.head, body), params={'symbol': self.symbol}).json()
+        return request(
+            "get", path.join(self.head, body), params={"symbol": self.symbol}
+        ).json()
 
     def new_order(
-            self,
-            side,
-            type,
-            timeInForce,
-            quantity,
-            price,
-            stopPrice=0.0,
-            icebergQty=0.0,
-            newOrderRespType={},
+        self,
+        side,
+        type,
+        timeInForce,
+        quantity,
+        price,
+        stopPrice=0.0,
+        icebergQty=0.0,
+        newOrderRespType={},
     ):
         """
 
@@ -383,28 +406,30 @@ class BinanceCoreApi:
                 }
         """
         # body = 'api/v3/order'
-        body = 'api/v3/order/test'
+        body = "api/v3/order/test"
         data = {
-            'symbol': self.symbol,
-            'side': side,
-            'type': type,
-            'timeInForce': timeInForce,
-            'quantity': quantity,
-            'price': price,
+            "symbol": self.symbol,
+            "side": side,
+            "type": type,
+            "timeInForce": timeInForce,
+            "quantity": quantity,
+            "price": price,
             # 'stopPrice': stopPrice,
             # 'icebergQty': icebergQty,
             # 'newOrderRespType': newOrderRespType,
-            'timestamp': self.timestamp,
+            "timestamp": self.timestamp,
         }
         signature = hmac.new(
-                self.secretkey.encode(),
-                '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
-                digestmod=hashlib.sha256
-            ).hexdigest()
+            self.secretkey.encode(),
+            "&".join(["{k}={v}".format(k=k, v=v) for k, v in data.items()]).encode(),
+            digestmod=hashlib.sha256,
+        ).hexdigest()
 
-        data.update({'signature': signature})
+        data.update({"signature": signature})
 
-        return request('post', path.join(self.head, body), data=data, headers=self.header).json()
+        return request(
+            "post", path.join(self.head, body), data=data, headers=self.header
+        ).json()
 
     def cancel_order(self, orderId=None):
         """
@@ -418,17 +443,19 @@ class BinanceCoreApi:
                   "clientOrderId": "cancelMyOrder1"
                 }
         """
-        body = 'api/v3/order'
-        data = {'symbol': self.symbol, 'timestamp': self.timestamp, 'orderId': orderId}
+        body = "api/v3/order"
+        data = {"symbol": self.symbol, "timestamp": self.timestamp, "orderId": orderId}
         signature = hmac.new(
             settings.BINANCE_SECRETKEY.encode(),
-            '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
-            digestmod=hashlib.sha256
+            "&".join(["{k}={v}".format(k=k, v=v) for k, v in data.items()]).encode(),
+            digestmod=hashlib.sha256,
         ).hexdigest()
 
-        data.update({'signature': signature})
+        data.update({"signature": signature})
 
-        return request('delete', path.join(self.head, body), data=data, headers=self.header).json()
+        return request(
+            "delete", path.join(self.head, body), data=data, headers=self.header
+        ).json()
 
     def current_open_orders(self):
         """
@@ -452,17 +479,19 @@ class BinanceCoreApi:
                   }
                 ]
         """
-        body = 'api/v3/openOrders'
-        data = {'symbol': self.symbol, 'timestamp': self.timestamp}
+        body = "api/v3/openOrders"
+        data = {"symbol": self.symbol, "timestamp": self.timestamp}
         signature = hmac.new(
             settings.BINANCE_SECRETKEY.encode(),
-            '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
-            digestmod=hashlib.sha256
+            "&".join(["{k}={v}".format(k=k, v=v) for k, v in data.items()]).encode(),
+            digestmod=hashlib.sha256,
         ).hexdigest()
 
-        data.update({'signature': signature})
+        data.update({"signature": signature})
 
-        return request('get', path.join(self.head, body), params=data, headers=self.header).json()
+        return request(
+            "get", path.join(self.head, body), params=data, headers=self.header
+        ).json()
 
     def account_information(self):
         """
@@ -491,17 +520,19 @@ class BinanceCoreApi:
                   ]
                 }
         """
-        body = 'api/v3/account'
-        data = {'timestamp': self.timestamp}
+        body = "api/v3/account"
+        data = {"timestamp": self.timestamp}
         signature = hmac.new(
             settings.BINANCE_SECRETKEY.encode(),
-            '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
-            digestmod=hashlib.sha256
+            "&".join(["{k}={v}".format(k=k, v=v) for k, v in data.items()]).encode(),
+            digestmod=hashlib.sha256,
         ).hexdigest()
 
-        data.update({'signature': signature})
+        data.update({"signature": signature})
 
-        return request('get', path.join(self.head, body), params=data, headers=self.header).json()
+        return request(
+            "get", path.join(self.head, body), params=data, headers=self.header
+        ).json()
 
     def account_trade_list(self):
         """
@@ -522,14 +553,16 @@ class BinanceCoreApi:
                   }
                 ]
         """
-        body = 'api/v3/myTrades'
-        data = {'symbol': self.symbol, 'timestamp': self.timestamp}
+        body = "api/v3/myTrades"
+        data = {"symbol": self.symbol, "timestamp": self.timestamp}
         signature = hmac.new(
             settings.BINANCE_SECRETKEY.encode(),
-            '&'.join(['{k}={v}'.format(k=k, v=v) for k, v in data.items()]).encode(),
-            digestmod=hashlib.sha256
+            "&".join(["{k}={v}".format(k=k, v=v) for k, v in data.items()]).encode(),
+            digestmod=hashlib.sha256,
         ).hexdigest()
 
-        data.update({'signature': signature})
+        data.update({"signature": signature})
 
-        return request('get', path.join(self.head, body), params=data, headers=self.header).json()
+        return request(
+            "get", path.join(self.head, body), params=data, headers=self.header
+        ).json()

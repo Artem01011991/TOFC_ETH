@@ -2,6 +2,7 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import create_engine
+
 from tofc_eth.conf import settings
 from tofc_eth.declarative_classes.common import Exchange, TimeStamp
 
@@ -59,9 +60,7 @@ def run_migrations_online():
     connectable = create_engine(settings.DATABASE_URL)
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
