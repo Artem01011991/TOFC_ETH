@@ -1,10 +1,10 @@
 import time
 from datetime import datetime
 
-from tofc_eth import core_api
 from tofc_eth.conf import settings
-from tofc_eth.core_binance_api import BinanceCoreApi
-from tofc_eth.db_operations import Connection
+from tofc_eth.connections import Connection
+from tofc_eth.exchange_apis import index
+from tofc_eth.exchange_apis.binance import BinanceCoreApi
 from tofc_eth.operations import Operations
 
 
@@ -27,7 +27,7 @@ def delay_func(func, *args, **kwargs):
 
 
 def main_index():
-    index_connection = core_api.IndexInfo(settings.USER_LOGIN, settings.USER_PASS, settings.USER_WMID)
+    index_connection = index.IndexInfo(settings.USER_LOGIN, settings.USER_PASS, settings.USER_WMID)
     instrument_info = delay_func(index_connection.get_eth_status)
     db_connection = Connection()
     user_info = delay_func(index_connection.get_balance)

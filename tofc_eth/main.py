@@ -3,7 +3,7 @@ import subprocess
 import sys
 
 from tofc_eth.conf import settings
-from tofc_eth.sched_functions import sched_job
+from tofc_eth.schedulers.handlers import sched_job
 
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)
